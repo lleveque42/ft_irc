@@ -3,33 +3,38 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
+/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/16 13:20:49 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/16 15:18:04 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-#include "ft_irc.hpp"
+#include <iostream>
+#include <string>
+#include <cstdlib>
+#include <cstring>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include "../includes/Exception.hpp"
 
 class Server
 {
 	private:
-		struct addrinfo		_addrinfo; // ????
+		struct addrinfo		*_servinfo;
 		std::string			_password;
-		int					_port;
+		char				*_port;
 		int					_sd;
-		int					_new_fd;
+		// int					_new_fd;
+
 
 	public:
-		Server(int port, std::string password);
+		Server(char *port, char *password);
 		~Server();
-		void	launch();
+		void	setup();
 
 	private:
 		// Private func

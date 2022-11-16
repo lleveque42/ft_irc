@@ -3,16 +3,16 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+         #
+#    By: arudy <arudy@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/16 08:42:57 by arudy             #+#    #+#              #
-#    Updated: 2022/11/16 14:24:16 by lleveque         ###   ########.fr        #
+#    Updated: 2022/11/16 15:21:27 by arudy            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	= ircserv
 
-SRCS	= $(addprefix srcs/, main.cpp Server.cpp Client.cpp)
+SRCS	= $(addprefix srcs/, main.cpp Server.cpp User.cpp)
 
 OBJS	= $(SRCS:.cpp=.o)
 # DEPS	= $(SRCS:.cpp=.d)

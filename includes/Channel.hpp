@@ -5,7 +5,7 @@ class Channel
 {
 	public:
 		Channel(void);
-		Channel(** replace parameters **);
+		Channel();
 		Channel(Channel const &instance);
 		Channel &operator=(Channel const &rhs);
 		~Channel(void);
