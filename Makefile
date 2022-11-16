@@ -6,7 +6,7 @@
 #    By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/16 08:42:57 by arudy             #+#    #+#              #
-#    Updated: 2022/11/16 13:53:55 by lleveque         ###   ########.fr        #
+#    Updated: 2022/11/16 14:24:16 by lleveque         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,8 @@ CC		= c++
 
 RM		= rm -f
 
-CFLAGS	= -Wall -Werror -Wextra -pedantic -MMD -MP -std=c++98
+CFLAGS	= -Wall -Werror -Wextra -pedantic -std=c++98
+# -MMD -MP
 
 all: $(NAME)
 
