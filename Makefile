@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: arudy <arudy@student.42.fr>                +#+  +:+       +#+         #
+#    By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/16 08:42:57 by arudy             #+#    #+#              #
-#    Updated: 2022/11/16 11:21:24 by arudy            ###   ########.fr        #
+#    Updated: 2022/11/16 13:53:55 by lleveque         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@ NAME	= ircserv
 SRCS	= $(addprefix srcs/, main.cpp Server.cpp Client.cpp)
 
 OBJS	= $(SRCS:.cpp=.o)
-DEPS	= $(SRCS:.cpp=.d)
+# DEPS	= $(SRCS:.cpp=.d)
 
 CC		= c++
 
@@ -32,7 +32,8 @@ $(NAME): $(OBJS)
 		${CC} ${CFLAGS} -c $< -o $@
 
 clean:
-	${RM} ${OBJS} ${DEPS}
+	${RM} ${OBJS}
+# ${DEPS}
 
 fclean: clean
 	${RM} ${NAME}
@@ -42,6 +43,6 @@ re: fclean all
 rc: re
 	${RM} ${OBJS} && clear
 
--include $(DEPS)
+# -include $(DEPS)
 
 .PHONY: all clean fclean re rc
