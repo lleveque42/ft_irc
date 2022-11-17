@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
+/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/17 17:26:32 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/17 17:39:31 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,5 +71,7 @@ class Server
 		int		_fillRecvs(std::string buff);
 		int		_manageCmd(pollfd pfd, std::pair<std::string, std::string> cmd);
 		int		_pass(pollfd pfds, std::string buff);
+		int		_user(pollfd pfds, std::string buff);
+		int		_nick(pollfd pfds, std::string buff);
 		// Private func
 };

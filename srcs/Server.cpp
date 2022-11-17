@@ -27,6 +27,8 @@ Server::~Server()
 
 void Server::_initCmd() {
 	_cmds["PASS"] = &Server::_pass;
+	_cmds["USER"] = &Server::_user;
+	_cmds["NICK"] = &Server::_nick;
 }
 
 void Server::setup()
@@ -132,7 +134,7 @@ int Server::_manageRequest(pollfd pfd) {
 		if (_recvs[i].first == "CAP" && _recvs[i].second == "LS") // checker cap
 			continue;
 		if (_users[pfd.fd]->getAuth())
-			_kickUser(pfd);
+			// _kickUser(pfd);
 	}
 	(void)size;
 	_recvs.clear();
@@ -140,14 +142,30 @@ int Server::_manageRequest(pollfd pfd) {
 }
 
 int Server::_manageCmd(pollfd pfd, std::pair<std::string, std::string> cmd) {
-	_pass(pfd, cmd.second);
+	// _pass(pfd, cmd.second);
+	_cmds.find(cmd.first);
 	return 0;
 }
 
-/////////////////////////////////////
+/////////////////  COMMANDS  ////////////////////
+// Keep ret values ???
 
 int	Server::_pass(pollfd pfd, std::string buff) {
+	std::cout << "PASS\n";
+	(void)pfd;
+	(void)buff;
+	return 0;
+}
 
+int	Server::_user(pollfd pfd, std::string buff) {
+	std::cout << "USER\n";
+	(void)pfd;
+	(void)buff;
+	return 0;
+}
+
+int	Server::_nick(pollfd pfd, std::string buff) {
+	std::cout << "USER\n";
 	(void)pfd;
 	(void)buff;
 	return 0;
