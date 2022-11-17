@@ -6,13 +6,13 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:08:12 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/17 12:06:35 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/17 100:00:224 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Server.hpp"
 
-Server::Server(char *port, char *password) : _password(password), _port(port)
+Server::Server(char *port, char *password) : _password(password), _port(port), _pfds(), _fdCount(0)
 {
 	std::cout << "Server port : " << _port << std::endl;
 	std::cout << "Server password : " << _password << std::endl;
@@ -27,8 +27,9 @@ Server::~Server()
 void Server::setup()
 {
 	std::cout << "======== SETUP ========\n";
-	struct addrinfo *servinfo;
 	struct addrinfo hints;
+	struct addrinfo *servinfo = NULL;
+	struct addrinfo *tmp = NULL;
 	int optval = 1; // Allows other sockets to bind to this port, unless there is an active listening socket bound to the port already.
 
 	memset(&hints, 0, sizeof hints);
@@ -37,13 +38,27 @@ void Server::setup()
 	hints.ai_flags = AI_PASSIVE;
 	if (getaddrinfo(NULL, _port, &hints, &servinfo)) // remplie servinfo
 		throw Exception::getaddrinfo();
-	if ((_sd = socket(servinfo->ai_family, servinfo->ai_socktype, servinfo->ai_protocol)) == -1) // retourne un socket descriptor pour les appels systemes
-		throw Exception::socket();
-	setsockopt(_sd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(int));
-	fcntl(_sd, F_SETFL, O_NONBLOCK);
-	if (bind(_sd, servinfo->ai_addr, servinfo->ai_addrlen)) // binds le socket sur le host
+	for (tmp = servinfo; tmp; tmp = tmp->ai_next) {
+		if ((_sd = socket(servinfo->ai_family, servinfo->ai_socktype, servinfo->ai_protocol)) == -1) // retourne un socket descriptor pour les appels systemes
+			continue;
+		setsockopt(_sd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(int)); // est ce qu on est sur qu on veut reallouer l'addresse ??
+		fcntl(_sd, F_SETFL, O_NONBLOCK);
+		if (bind(_sd, servinfo->ai_addr, servinfo->ai_addrlen)) { // binds le socket sur le host
+			close(_sd);
+			continue;
+		}
+		break;
+	}
+	if (tmp == NULL) // aucune adresse de bind
 		throw Exception::bind();
 	freeaddrinfo(servinfo);
+	if (listen(_sd, 10)) // queue toutes les connections entrantes, 10 max (arbitraire ca pourrait etre 20 au max)
+		throw Exception::listen();
+	_pfds.push_back(pollfd());
+	_pfds.back().fd = _sd;
+	_pfds.back().events = POLLIN;
+	_fdCount = 1;
+	std::cout << "setup completed!" << std::endl;
 }
 
 void test(int sig) {
@@ -52,39 +67,40 @@ void test(int sig) {
 }
 
 void Server::launch() {
-	int new_sd; // peut etre a mettre dans user ? chaque nouvelle connexion accepté crée un nouveau fd donc 1 par user
+	std::cout << "======== LAUNCH ========\n";
+	std::cout << "ircserv: waiting for connections..." << std::endl;
+	while (1) {
+		if (poll(&_pfds[0], _fdCount, -1) == -1)
+			throw Exception::poll();
+		if (_pfds[0].revents == POLLIN)
+			acceptUser();
+		std::vector<pollfd>::iterator ite = _pfds.end();
+		for (std::vector<pollfd>::iterator it = _pfds.begin() + 1; it != ite; it++)
+			if ((*it).revents == POLLIN)
+				manageRequest(*it);
+	}
+}
+
+void Server::acceptUser() {
+	int newSd; // peut etre a mettre dans user ? chaque nouvelle connexion accepté crée un nouveau fd donc 1 par user
 	sockaddr_storage newAddr; // ou toutes les infos de la nouvelle connexion vont aller
 	socklen_t newAddrSize; // sizeof sockaddr_storage
-	int user_id = 0; // A virer
 
-	std::cout << "======== LAUNCH ========\n";
-	if (listen(_sd, 10)) // queue toutes les connections entrantes, 10 max (arbitraire ca pourrait etre 20 au max)
-		throw Exception::listen();
-	std::cout << "ircserv: waiting for connections..." << std::endl;
+	newAddrSize = sizeof newAddr;
+	newSd = accept(_sd, (sockaddr *)&newAddr, &newAddrSize); // accepte les connections entrantes, le nouveau fd sera pour recevoir et envoyer des appels
+	_users.insert(std::pair<int, User*>(newSd, new User(newSd))); // pair first garder user_id ? Ou mettre le sd
+	_pfds.push_back(pollfd());
+	_pfds.back().fd = newSd;
+	_pfds.back().events = POLLIN;
+	_fdCount++;
+}
 
-	std::cout << "main sd : " << _sd << std::endl;
-	// while (user_id != 1) {
-	while (1) {
-		newAddrSize = sizeof newAddr;
-		new_sd = accept(_sd, (sockaddr *)&newAddr, &newAddrSize); // accepte les connections entrantes, le nouveau fd sera pour recevoir et envoyer des appels
-		if (new_sd == -1 && (errno == EAGAIN || errno == EWOULDBLOCK))
-			continue;
-		else if (new_sd == -1) {
-			std::cerr << "accept error\n";
-			continue;
-		}
-		else {
-			_users.insert(std::pair<int, User*>(user_id, new User(new_sd))); // pair first garder user_id ? Ou mettre le sd
-			user_id++;
-			std::cerr << "connection ok\n";
-		}
+int Server::manageRequest(pollfd pfds) {
+	int size;
 
-		// fcntl(new_sd, F_SETFL, O_NONBLOCK);
-		// if (poll()) {
-			// manageEntry();
-		// }
-		for (std::map<int, User*>::iterator it = _users.begin(); it != _users.end(); it++)
-			std::cout << "Int " << it->first << " | User sd " << it->second->getUserSd() << std::endl;
-	}
-
+	size = recv(pfds.fd, _buff, BUFFER_SIZE, 0);
+	// if (size = 0)
+		// delete client
+	// if (_users[pfds.fd]->getAuth())
+	std::cout << "1 buffer: " <<  _buff << std::endl;
 }
