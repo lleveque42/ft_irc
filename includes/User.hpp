@@ -17,6 +17,7 @@ class User
 {
 	private:
 		int			_user_sd;
+		bool		_auth;
 		std::string	_nick;
 		std::string	_user_name;
 		User();

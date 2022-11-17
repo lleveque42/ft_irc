@@ -12,7 +12,7 @@
 
 #include "../includes/User.hpp"
 
-User::User(int sd) : _user_sd(sd), _nick(""), _user_name("")
+User::User(int sd) : _user_sd(sd), _auth(false), _nick(""), _user_name("")
 {}
 
 User::~User()
