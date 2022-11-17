@@ -14,8 +14,8 @@
 
 Server::Server(char *port, char *password) : _password(password), _port(port), _pfds(), _fdCount(0)
 {
-	std::cout << "Server port : " << _port << std::endl;
-	std::cout << "Server password : " << _password << std::endl;
+	std::cout << BLUE << "Server port : " << UL << _port << RESET << std::endl;
+	std::cout << BLUE << "Server password : " << UL << _password << RESET << std::endl;
 	_initCmd();
 }
 
@@ -33,7 +33,6 @@ void Server::_initCmd() {
 
 void Server::setup()
 {
-	std::cout << "======== SETUP ========\n";
 	struct addrinfo hints;
 	struct addrinfo *servinfo = NULL;
 	struct addrinfo *tmp = NULL;
@@ -65,16 +64,9 @@ void Server::setup()
 	_pfds.back().fd = _sd;
 	_pfds.back().events = POLLIN;
 	_fdCount = 1;
-	std::cout << "setup completed!" << std::endl;
-}
-
-void test(int sig) {
-	if (sig == SIGINT)
-		std::cout << "SIGINT pressed!\n";
 }
 
 void Server::launch() {
-	std::cout << "======== LAUNCH ========\n";
 	std::cout << "ircserv: waiting for connections..." << std::endl;
 	while (1) {
 		if (poll(&_pfds[0], _fdCount, -1) == -1)
@@ -89,7 +81,7 @@ void Server::launch() {
 }
 
 void Server::_acceptUser() {
-	int new_sd; // peut etre a mettre dans user ? chaque nouvelle connexion accepté crée un nouveau fd donc 1 par user
+	int new_sd;
 	sockaddr_storage new_addr; // ou toutes les infos de la nouvelle connexion vont aller
 	socklen_t new_addr_size; // sizeof sockaddr_storage
 
@@ -133,7 +125,7 @@ int Server::_manageRequest(pollfd pfd) {
 		_manageCmd(pfd, _recvs[i]);
 		if (_recvs[i].first == "CAP" && _recvs[i].second == "LS") // checker cap
 			continue;
-		if (_users[pfd.fd]->getAuth())
+		// if (_users[pfd.fd]->getAuth())
 			// _kickUser(pfd);
 	}
 	(void)size;
@@ -152,7 +144,10 @@ int Server::_manageCmd(pollfd pfd, std::pair<std::string, std::string> cmd) {
 
 int	Server::_pass(pollfd pfd, std::string arg) {
 	if (arg == _password)
-		send(pfd.fd, _buff, sizeof _buff, MSG_CONFIRM);
+	{
+		std::string s = "PASSSSS";
+		send(pfd.fd, (s + "\r\n").c_str(), (s + "\r\n").length(), 0);
+	}
 	(void)arg;
 	(void)pfd;
 	return 0;
@@ -166,4 +161,8 @@ int	Server::_user(pollfd pfd, std::string buff) {
 }
 
 int	Server::_nick(pollfd pfd, std::string buff) {
-	std::cout << "USER\n";
+	std::cout << "NICK\n";
+	(void)pfd;
+	(void)buff;
+	return 0;
+}
