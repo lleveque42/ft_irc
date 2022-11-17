@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
+/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/16 15:18:04 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/16 17:47:02 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,14 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <csignal>
+#include <fcntl.h>
+#include <cerrno>
 #include "../includes/Exception.hpp"
 
 class Server
 {
 	private:
-		struct addrinfo		*_servinfo;
 		std::string			_password;
 		char				*_port;
 		int					_sd;
@@ -35,6 +37,7 @@ class Server
 		Server(char *port, char *password);
 		~Server();
 		void	setup();
+		void	launch();
 
 	private:
 		// Private func
