@@ -142,18 +142,19 @@ int Server::_manageRequest(pollfd pfd) {
 }
 
 int Server::_manageCmd(pollfd pfd, std::pair<std::string, std::string> cmd) {
-	// _pass(pfd, cmd.second);
-	_cmds.find(cmd.first);
+	if (_cmds.find(cmd.first) != _cmds.end())
+		(this->*_cmds[cmd.first])(pfd, cmd.second);
 	return 0;
 }
 
 /////////////////  COMMANDS  ////////////////////
 // Keep ret values ???
 
-int	Server::_pass(pollfd pfd, std::string buff) {
-	std::cout << "PASS\n";
+int	Server::_pass(pollfd pfd, std::string arg) {
+	if (arg == _password)
+		send(pfd.fd, _buff, sizeof _buff, MSG_CONFIRM);
+	(void)arg;
 	(void)pfd;
-	(void)buff;
 	return 0;
 }
 
@@ -166,7 +167,3 @@ int	Server::_user(pollfd pfd, std::string buff) {
 
 int	Server::_nick(pollfd pfd, std::string buff) {
 	std::cout << "USER\n";
-	(void)pfd;
-	(void)buff;
-	return 0;
-}

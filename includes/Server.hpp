@@ -6,7 +6,11 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2022/11/17 17:39:31 by arudy            ###   ########.fr       */
+=======
+/*   Updated: 2022/11/17 17:51:01 by lleveque         ###   ########.fr       */
+>>>>>>> 4fa93fd2be87464d974513d0cf73dbbae56065a9
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +48,10 @@
 #define PINK "\033[95m"
 #define STAR "\033[92m * \033[0m"
 
+class Server;
+
+typedef int (Server::*cmds)(pollfd, std::string);
+
 class Server
 {
 	private:
@@ -55,7 +63,7 @@ class Server
 		int						_fdCount;
 		char					_buff[BUFFER_SIZE + 1];
 		std::vector<std::pair<std::string, std::string> > _recvs;
-		std::map<const std::string, int(Server::*)(pollfd, std::string)> _cmds;
+		std::map<const std::string, cmds> _cmds;
 
 
 	public:
