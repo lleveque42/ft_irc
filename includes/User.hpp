@@ -28,4 +28,5 @@ class User
 		int const			&getUserSd() const;
 		std::string const	&getNick() const;
 		std::string const	&getUserName() const;
+		bool const			&getAuth() const;
 };

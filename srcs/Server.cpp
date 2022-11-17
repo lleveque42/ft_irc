@@ -16,12 +16,17 @@ Server::Server(char *port, char *password) : _password(password), _port(port), _
 {
 	std::cout << "Server port : " << _port << std::endl;
 	std::cout << "Server password : " << _password << std::endl;
+	initCmd();
 }
 
 Server::~Server()
 {
 	std::cout << "Destructor server\n";
 	// Delete pair.second in _users
+}
+
+void Server::initCmd() {
+	_cmds["PASS"] = &Server::_pass;
 }
 
 void Server::setup()
@@ -76,31 +81,53 @@ void Server::launch() {
 			acceptUser();
 		std::vector<pollfd>::iterator ite = _pfds.end();
 		for (std::vector<pollfd>::iterator it = _pfds.begin() + 1; it != ite; it++)
-			if ((*it).revents == POLLIN)
-				manageRequest(*it);
+			if ((*it).revents == POLLIN) {
+				recv((*it).fd, _buff, BUFFER_SIZE, 0);
+				std::cout << "1 buffer: " <<  _buff << std::endl;
+			}
+				// manageRequest(*it);
 	}
 }
 
 void Server::acceptUser() {
-	int newSd; // peut etre a mettre dans user ? chaque nouvelle connexion accepté crée un nouveau fd donc 1 par user
-	sockaddr_storage newAddr; // ou toutes les infos de la nouvelle connexion vont aller
-	socklen_t newAddrSize; // sizeof sockaddr_storage
+	int new_sd; // peut etre a mettre dans user ? chaque nouvelle connexion accepté crée un nouveau fd donc 1 par user
+	sockaddr_storage new_addr; // ou toutes les infos de la nouvelle connexion vont aller
+	socklen_t new_addr_size; // sizeof sockaddr_storage
 
-	newAddrSize = sizeof newAddr;
-	newSd = accept(_sd, (sockaddr *)&newAddr, &newAddrSize); // accepte les connections entrantes, le nouveau fd sera pour recevoir et envoyer des appels
-	_users.insert(std::pair<int, User*>(newSd, new User(newSd))); // pair first garder user_id ? Ou mettre le sd
+	new_addr_size = sizeof new_addr;
+	new_sd = accept(_sd, (sockaddr *)&new_addr, &new_addr_size); // accepte les connections entrantes, le nouveau fd sera pour recevoir et envoyer des appels
+	_users.insert(std::pair<int, User*>(new_sd, new User(new_sd))); // pair first garder user_id ? Ou mettre le sd
 	_pfds.push_back(pollfd());
-	_pfds.back().fd = newSd;
+	_pfds.back().fd = new_sd;
 	_pfds.back().events = POLLIN;
 	_fdCount++;
 }
 
-int Server::manageRequest(pollfd pfds) {
+int Server::manageRequest(pollfd pfd) {
 	int size;
 
-	size = recv(pfds.fd, _buff, BUFFER_SIZE, 0);
+	size = recv(pfd.fd, _buff, BUFFER_SIZE, 0);
+	std::cout << "1 buffer: " <<  _buff << std::endl;
+	if (manageCmd)
+	// manageCmd(pfd, _buff);
+	(void)size;
 	// if (size = 0)
 		// delete client
-	// if (_users[pfds.fd]->getAuth())
-	std::cout << "1 buffer: " <<  _buff << std::endl;
+	if (_users[pfd.fd]->getAuth())
+		// delete/kick client
+	return 0;
+}
+
+int Server::manageCmd(pollfd pfd, std::string buff) {
+	_pass(pfd, buff);
+	return 0;
+}
+
+/////////////////////////////////////
+
+int	Server::_pass(pollfd pfd, std::string buff){
+	std::cout << "coucouc\n";
+	(void)pfd;
+	(void)buff;
+	return 0;
 }
