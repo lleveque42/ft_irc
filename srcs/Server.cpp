@@ -16,7 +16,7 @@ Server::Server(char *port, char *password) : _password(password), _port(port), _
 {
 	std::cout << "Server port : " << _port << std::endl;
 	std::cout << "Server password : " << _password << std::endl;
-	initCmd();
+	_initCmd();
 }
 
 Server::~Server()
@@ -25,7 +25,7 @@ Server::~Server()
 	// Delete pair.second in _users
 }
 
-void Server::initCmd() {
+void Server::_initCmd() {
 	_cmds["PASS"] = &Server::_pass;
 }
 
@@ -78,18 +78,15 @@ void Server::launch() {
 		if (poll(&_pfds[0], _fdCount, -1) == -1)
 			throw Exception::poll();
 		if (_pfds[0].revents == POLLIN)
-			acceptUser();
+			_acceptUser();
 		std::vector<pollfd>::iterator ite = _pfds.end();
 		for (std::vector<pollfd>::iterator it = _pfds.begin() + 1; it != ite; it++)
-			if ((*it).revents == POLLIN) {
-				recv((*it).fd, _buff, BUFFER_SIZE, 0);
-				std::cout << "1 buffer: " <<  _buff << std::endl;
-			}
-				// manageRequest(*it);
+			if ((*it).revents == POLLIN)
+				_manageRequest(*it);
 	}
 }
 
-void Server::acceptUser() {
+void Server::_acceptUser() {
 	int new_sd; // peut etre a mettre dans user ? chaque nouvelle connexion accepté crée un nouveau fd donc 1 par user
 	sockaddr_storage new_addr; // ou toutes les infos de la nouvelle connexion vont aller
 	socklen_t new_addr_size; // sizeof sockaddr_storage
@@ -103,30 +100,54 @@ void Server::acceptUser() {
 	_fdCount++;
 }
 
-int Server::manageRequest(pollfd pfd) {
+int Server::_fillRecvs(std::string buff) {
+	std::string::iterator begin;
+	std::string::iterator space;
+	std::string::iterator backr;
+	int lines = std::count(buff.begin(), buff.end(), '\n');
+
+	for (int i = 0; i < lines; i++) {
+		begin = buff.begin();
+		space = begin + buff.find(' ');
+		backr = begin + buff.find('\r');
+		_recvs.push_back(std::make_pair(std::string(begin, space), std::string(space + 1, backr)));
+		buff.erase(begin, backr + 2);
+	}
+	return lines;
+}
+
+int Server::_manageRequest(pollfd pfd) {
 	int size;
+	int lines;
 
 	size = recv(pfd.fd, _buff, BUFFER_SIZE, 0);
-	std::cout << "1 buffer: " <<  _buff << std::endl;
-	if (manageCmd)
-	// manageCmd(pfd, _buff);
-	(void)size;
 	// if (size = 0)
 		// delete client
-	if (_users[pfd.fd]->getAuth())
-		// delete/kick client
+	lines = _fillRecvs(std::string(_buff));
+	// for (size_t i = 0; i < _recvs.size(); i++)
+		// std::cout << "first: " << _recvs[i].first << " || second: " << _recvs[i].second << std::endl;
+	for (int i = 0; i < lines; i++) {
+		std::cout << GREEN BOLD "[Server]" RESET GREEN " Recv    <--    " GREEN BOLD "[Client " << pfd.fd << "]" RESET GREEN ":    " << _recvs[i].first << " " << _recvs[i].second << RESET << std::endl;
+		_manageCmd(pfd, _recvs[i]);
+		if (_recvs[i].first == "CAP" && _recvs[i].second == "LS") // checker cap
+			continue;
+		if (_users[pfd.fd]->getAuth())
+			_kickUser(pfd);
+	}
+	(void)size;
+	_recvs.clear();
 	return 0;
 }
 
-int Server::manageCmd(pollfd pfd, std::string buff) {
-	_pass(pfd, buff);
+int Server::_manageCmd(pollfd pfd, std::pair<std::string, std::string> cmd) {
+	_pass(pfd, cmd.second);
 	return 0;
 }
 
 /////////////////////////////////////
 
-int	Server::_pass(pollfd pfd, std::string buff){
-	std::cout << "coucouc\n";
+int	Server::_pass(pollfd pfd, std::string buff) {
+
 	(void)pfd;
 	(void)buff;
 	return 0;
