@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
+/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/16 17:47:02 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/17 09:17:58 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,15 +22,17 @@
 #include <csignal>
 #include <fcntl.h>
 #include <cerrno>
+#include <map>
 #include "../includes/Exception.hpp"
+#include "../includes/User.hpp"
 
 class Server
 {
 	private:
-		std::string			_password;
-		char				*_port;
-		int					_sd;
-		// int					_new_fd;
+		std::string				_password;
+		char					*_port;
+		int						_sd;
+		std::map<int, User*>	_users;
 
 
 	public:

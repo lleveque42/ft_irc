@@ -11,12 +11,20 @@
 /* ************************************************************************** */
 
 #pragma once
+#include <iostream>
 
 class User
 {
 	private:
-		/* data */
+		int			_user_sd;
+		std::string	_nick;
+		std::string	_user_name;
+		User();
+
 	public:
-		User(/* args */);
+		User(int sd);
 		~User();
+		int const			&getUserSd() const;
+		std::string const	&getNick() const;
+		std::string const	&getUserName() const;
 };

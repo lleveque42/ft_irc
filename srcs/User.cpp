@@ -12,10 +12,13 @@
 
 #include "../includes/User.hpp"
 
-User::User(/* args */)
-{
-}
+User::User(int sd) : _user_sd(sd), _nick(""), _user_name("")
+{}
 
 User::~User()
 {
 }
+
+int const			&User::getUserSd() const { return _user_sd; }
+std::string const	&User::getNick() const { return _nick; }
+std::string const	&User::getUserName() const { return _user_name; }
