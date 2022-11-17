@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/17 17:26:32 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/17 17:51:01 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,10 @@
 #define PINK "\033[95m"
 #define STAR "\033[92m * \033[0m"
 
+class Server;
+
+typedef int (Server::*cmds)(pollfd, std::string);
+
 class Server
 {
 	private:
@@ -55,7 +59,7 @@ class Server
 		int						_fdCount;
 		char					_buff[BUFFER_SIZE + 1];
 		std::vector<std::pair<std::string, std::string> > _recvs;
-		std::map<const std::string, int(Server::*)(pollfd, std::string)> _cmds;
+		std::map<const std::string, cmds> _cmds;
 
 
 	public:
@@ -70,6 +74,6 @@ class Server
 		int		_manageRequest(pollfd pfds);
 		int		_fillRecvs(std::string buff);
 		int		_manageCmd(pollfd pfd, std::pair<std::string, std::string> cmd);
-		int		_pass(pollfd pfds, std::string buff);
+		int		_pass(pollfd pfds, std::string arg);
 		// Private func
 };

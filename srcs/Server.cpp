@@ -131,8 +131,8 @@ int Server::_manageRequest(pollfd pfd) {
 		_manageCmd(pfd, _recvs[i]);
 		if (_recvs[i].first == "CAP" && _recvs[i].second == "LS") // checker cap
 			continue;
-		if (_users[pfd.fd]->getAuth())
-			_kickUser(pfd);
+		// if (_users[pfd.fd]->getAuth())
+			// _disconnectUser(pfd);
 	}
 	(void)size;
 	_recvs.clear();
@@ -140,15 +140,17 @@ int Server::_manageRequest(pollfd pfd) {
 }
 
 int Server::_manageCmd(pollfd pfd, std::pair<std::string, std::string> cmd) {
-	_pass(pfd, cmd.second);
+	if (_cmds.find(cmd.first) != _cmds.end())
+		(this->*_cmds[cmd.first])(pfd, cmd.second);
 	return 0;
 }
 
 /////////////////////////////////////
 
-int	Server::_pass(pollfd pfd, std::string buff) {
-
+int	Server::_pass(pollfd pfd, std::string arg) {
+	if (arg == _password)
+		send(pfd.fd, _buff, sizeof _buff, MSG_CONFIRM);
+	(void)arg;
 	(void)pfd;
-	(void)buff;
 	return 0;
 }
