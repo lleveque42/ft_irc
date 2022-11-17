@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
+/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 08:43:59 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/16 15:20:54 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/16 17:46:58 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include "../includes/Exception.hpp"
 
 #define ARG_ERR "ircserv: 2 arguments needed:\n\nUsage is: ./ircserv <port> <password>\n\t<port>: port number on wich your IRC server will be listening to for incoming IRC connections\n\t<password>: it will be needed by any IRC client that tries to connect to your server"
-#define PORT_ERR  "Invalid port, use only number between "
+#define PORT_ERR  "Invalid port, use only number between 1024 and 65535"
 #define PASSWORD_ERR "Password must not be empty"
 
 bool	check_input(int ac, char **av)
@@ -23,7 +23,7 @@ bool	check_input(int ac, char **av)
 	if (ac != 3)
 	{
 		std::cerr << ARG_ERR << std::endl;
-		return false;
+		return 0;
 	}
 	const std::string port(av[1]);
 	std::string::const_iterator it = port.begin();
@@ -32,16 +32,27 @@ bool	check_input(int ac, char **av)
 		if (!std::isdigit(*it))
 		{
 			std::cerr << PORT_ERR << std::endl;
-			return false;
+			return 0;
 		}
+	}
+	if (port.length() == 5 || port.length() == 4) {
+		int portNb = atoi(port.c_str());
+		if (portNb < 1024 || portNb > 65535) {
+			std::cerr << PORT_ERR << std::endl;
+			return 0;
+		}
+	}
+	else {
+		std::cerr << PORT_ERR << std::endl;
+		return 0;
 	}
 	const std::string password(av[1]);
 	if (password.empty())
 	{
 		std::cerr << PASSWORD_ERR << std::endl;
-		return false;
+		return 0;
 	}
-	return true;
+	return 1;
 }
 
 int	main(int ac, char **av)
@@ -52,10 +63,11 @@ int	main(int ac, char **av)
 	try
 	{
 		server->setup();
+		server->launch();
 	}
 	catch(const std::exception& e)
 	{
-		std::cerr << e.what() << '\n';
+		std::cerr << e.what() << std::strerror(errno) << std::endl;
 		delete server;
 		return 1;
 	}
