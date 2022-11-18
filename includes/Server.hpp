@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/18 19:27:37 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/18 20:54:52 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,13 +78,12 @@ class Server
 		int		_sendAll(int fd, const char *buf, size_t len, int flags);
 		int		_sendError(pollfd pfd, std::string msg);
 		int		_sendExecuted(pollfd pfd, std::string ret);
-		int		_pass(pollfd pfds, std::string args);
-		int		_user(pollfd pfds, std::string args);
-		int		_nick(pollfd pfds, std::string buff);
 		int		_disconnectUser(pollfd pfd, int ret);
 		bool	_validChars(std::string s);
 		bool	_nickAlreadyUsed(User *current, std::string s);
-		void	_sendLogs(pollfd pfds);
-		void	_recvLogs(pollfd pfds);
+		int		_pass(pollfd pfd, std::string args);
+		int		_user(pollfd pfd, std::string args);
+		int		_nick(pollfd pfd, std::string buff);
+		int		_pong(pollfd pfd, std::string buff);
 
 };

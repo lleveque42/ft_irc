@@ -12,8 +12,8 @@
 
 #include "../includes/User.hpp"
 
-User::User(int sd) : _user_sd(sd), _auth(0), _triedToAuth(0), _nick(), _user_name(),
-_real_name(), _host_name()
+User::User(int sd) : _user_sd(sd), _auth(0), _tried_to_auth(0), _first_try(true),
+_nick(), _user_name(), _real_name(), _host_name()
 {
 }
 
@@ -46,7 +46,11 @@ bool const &User::getAuth() const {
 }
 
 bool const &User::getTriedToAuth() const {
-	return _triedToAuth;
+	return _tried_to_auth;
+}
+
+bool const &User::getFirstTry() const {
+	return _first_try;
 }
 
 void User::setNick(std::string value) {
@@ -70,5 +74,9 @@ void User::setAuth(bool value) {
 }
 
 void User::setTriedToAuth(bool value) {
-	_triedToAuth = value;
+	_tried_to_auth = value;
+}
+
+void User::setFirstTry(bool value) {
+	_first_try = value;
 }

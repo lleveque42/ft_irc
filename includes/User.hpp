@@ -18,7 +18,8 @@ class User
 	private:
 		int			_user_sd;
 		bool		_auth;
-		bool		_triedToAuth;
+		bool		_tried_to_auth;
+		bool		_first_try;
 		std::string	_nick;
 		std::string	_mode;
 		std::string	_user_name;
@@ -36,10 +37,12 @@ class User
 		std::string const	&getRealName() const;
 		bool const			&getAuth() const;
 		bool const			&getTriedToAuth() const;
+		bool const			&getFirstTry() const;
 		void				setNick(std::string value);
 		void				setUserName(std::string value);
 		void				setHostName(std::string value);
 		void				setRealName(std::string value);
 		void				setAuth(bool value);
 		void				setTriedToAuth(bool value);
+		void				setFirstTry(bool value);
 };
