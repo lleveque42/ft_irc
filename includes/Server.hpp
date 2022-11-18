@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
+/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/17 18:31:44 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/18 03:37:17 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,5 +77,6 @@ class Server
 		int		_pass(pollfd pfds, std::string buff);
 		int		_user(pollfd pfds, std::string buff);
 		int		_nick(pollfd pfds, std::string buff);
+		void	_disconnectUser(pollfd pfd);
 		// Private func
 };

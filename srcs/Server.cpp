@@ -94,6 +94,18 @@ void Server::_acceptUser() {
 	_fdCount++;
 }
 
+void Server::_disconnectUser(pollfd pfd) {
+	if (!_users[pfd.fd]->getTriedToAuth()) {
+		std::string err(":461 \033[91mConnection refused: No password provided\033[00m");
+		send(pfd.fd, err.c_str(), err.length(), 0);
+		std::cout << RED BOLD "[Server]" RESET RED " Send    -->    " RED BOLD "[Client " << pfd.fd << "]" RESET RED ":    No password provided, connection refused" << RESET << std::endl;
+	}
+	close(pfd.fd);
+	delete _users[pfd.fd];
+	_users.erase(pfd.fd);
+}
+
+
 int Server::_fillRecvs(std::string buff) {
 	std::string::iterator begin;
 	std::string::iterator space;
@@ -118,15 +130,15 @@ int Server::_manageRequest(pollfd pfd) {
 	// if (size = 0)
 		// delete client
 	lines = _fillRecvs(std::string(_buff));
-	// for (size_t i = 0; i < _recvs.size(); i++)
-		// std::cout << "first: " << _recvs[i].first << " || second: " << _recvs[i].second << std::endl;
 	for (int i = 0; i < lines; i++) {
 		std::cout << GREEN BOLD "[Server]" RESET GREEN " Recv    <--    " GREEN BOLD "[Client " << pfd.fd << "]" RESET GREEN ":    " << _recvs[i].first << " " << _recvs[i].second << RESET << std::endl;
 		_manageCmd(pfd, _recvs[i]);
 		if (_recvs[i].first == "CAP" && _recvs[i].second == "LS") // checker cap
 			continue;
-		// if (_users[pfd.fd]->getAuth())
-			// _kickUser(pfd);
+		if (!_users[pfd.fd]->getAuth()) {
+			_disconnectUser(pfd);
+			return 1;
+		}
 	}
 	(void)size;
 	_recvs.clear();
@@ -143,13 +155,18 @@ int Server::_manageCmd(pollfd pfd, std::pair<std::string, std::string> cmd) {
 // Keep ret values ???
 
 int	Server::_pass(pollfd pfd, std::string arg) {
-	if (arg == _password)
-	{
-		std::string s = "PASSSSS";
-		send(pfd.fd, (s + "\r\n").c_str(), (s + "\r\n").length(), 0);
+	if (_users[pfd.fd]->getAuth())
+		return 0; //voir quoi faire quand deja authentifié
+	if (arg != _password) {
+		_users[pfd.fd]->setTriedToAuth(true);
+		std::string err(":464 \033[91mConnection refused: Password incorrect\033[00m");
+		send(pfd.fd, err.c_str(), err.length(), 0);
+		std::cout << RED BOLD "[Server]" RESET RED " Send    -->    " RED BOLD "[Client " << pfd.fd << "]" RESET RED ":    Password incorrect, connection refused" << RESET << std::endl;
+		return 1;
 	}
-	(void)arg;
-	(void)pfd;
+	std::string s = "PASSSSS";
+	if (!_users[pfd.fd]->getAuth())
+		_users[pfd.fd]->setAuth(true);
 	return 0;
 }
 

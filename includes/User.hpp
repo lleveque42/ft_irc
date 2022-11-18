@@ -30,4 +30,7 @@ class User
 		std::string const	&getNick() const;
 		std::string const	&getUserName() const;
 		bool const			&getAuth() const;
+		bool const			&getTriedToAuth() const;
+		void				setAuth(bool value);
+		void				setTriedToAuth(bool value);
 };
