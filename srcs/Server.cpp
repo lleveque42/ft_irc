@@ -94,49 +94,51 @@ void Server::launch() {
 
 //////////////// MANAGE USERS ///////////////////
 
-	void Server::_acceptUser() {
-		int new_sd;
-		sockaddr_storage new_addr; // ou toutes les infos de la nouvelle connexion vont aller
-		socklen_t new_addr_size; // sizeof sockaddr_storage
+void Server::_acceptUser() {
+	int new_sd;
+	sockaddr_storage new_addr; // ou toutes les infos de la nouvelle connexion vont aller
+	socklen_t new_addr_size; // sizeof sockaddr_storage
 
-		std::cout << ORANGE BOLD "=========" GREEN "=========================" << RESET << std::endl;
-		std::cout << ORANGE BOLD "[ircserv]" GREEN " new incoming connection!" << RESET << std::endl;
-		std::cout << ORANGE BOLD "=========" GREEN "=========================" << RESET << std::endl;
-		new_addr_size = sizeof new_addr;
-		new_sd = accept(_sd, (sockaddr *)&new_addr, &new_addr_size); // accepte les connections entrantes, le nouveau fd sera pour recevoir et envoyer des appels
-		_users.insert(std::pair<int, User*>(new_sd, new User(new_sd))); // pair first garder user_id ? Ou mettre le sd
-		_pfds.push_back(pollfd());
-		_pfds.back().fd = new_sd;
-		_pfds.back().events = POLLIN;
-		_fd_count++;
-	}
+	std::cout << ORANGE BOLD "=========" GREEN "=========================" << RESET << std::endl;
+	std::cout << ORANGE BOLD "[ircserv]" GREEN " new incoming connection!" << RESET << std::endl;
+	std::cout << ORANGE BOLD "=========" GREEN "=========================" << RESET << std::endl;
+	new_addr_size = sizeof new_addr;
+	new_sd = accept(_sd, (sockaddr *)&new_addr, &new_addr_size); // accepte les connections entrantes, le nouveau fd sera pour recevoir et envoyer des appels
+	_users.insert(std::pair<int, User*>(new_sd, new User(new_sd))); // pair first garder user_id ? Ou mettre le sd
+	_pfds.push_back(pollfd());
+	_pfds.back().fd = new_sd;
+	_pfds.back().events = POLLIN;
+	_fd_count++;
+}
 
-	int Server::_disconnectUser(pollfd pfd, int ret) {
-		if (_users[pfd.fd]->getAuth()) {
-			std::cout << ORANGE BOLD "=========" RED "==============================" << RESET << std::endl;
-			std::cout << ORANGE BOLD "[ircserv]" RED " Client " << pfd.fd << " has left the server!" << std::endl;
-			std::cout << ORANGE BOLD "=========" RED "==============================" << RESET << std::endl;
-		}
-		else if (!_users[pfd.fd]->getTriedToAuth()) {
-			std::string err(":461 \033[91mConnection refused: No password provided\033[00m");
-			_sendAll(pfd.fd, err.c_str(), err.length(), 0);
-			std::cout << RED BOLD "[ircserv]" RESET RED " Send    -->    " RED BOLD "[Client " << pfd.fd << "]" RESET RED ":    Connection refused: No password provided" << RESET << std::endl;
-		}
-		close(pfd.fd);
-		delete _users[pfd.fd];
-		std::vector<pollfd>::iterator it;
-		for (it = _pfds.begin() + 1; it->fd != pfd.fd; it++)
-			;
-		_pfds.erase(it);
-		_users.erase(pfd.fd);
-		_recvs.clear();
-		_fd_count--;
-		return ret;
+int Server::_disconnectUser(pollfd pfd, int ret) {
+	if (_users[pfd.fd]->getAuth()) {
+		std::cout << ORANGE BOLD "=========" RED "==============================" << RESET << std::endl;
+		std::cout << ORANGE BOLD "[ircserv]" RED " Client " << pfd.fd << " has left the server!" << std::endl;
+		std::cout << ORANGE BOLD "=========" RED "==============================" << RESET << std::endl;
 	}
+	else if (!_users[pfd.fd]->getTriedToAuth()) {
+		std::string err(":461 \033[91mConnection refused: No password provided\033[00m");
+		_sendAll(pfd.fd, err.c_str(), err.length(), 0);
+		std::cout << RED BOLD "[ircserv]" RESET RED " Send    -->    " RED BOLD "[Client " << pfd.fd << "]" RESET RED ":    Connection refused: No password provided" << RESET << std::endl;
+	}
+	close(pfd.fd);
+	delete _users[pfd.fd];
+	std::vector<pollfd>::iterator it;
+	for (it = _pfds.begin() + 1; it->fd != pfd.fd; it++)
+		;
+	_pfds.erase(it);
+	_users.erase(pfd.fd);
+	_recvs.clear();
+	_fd_count--;
+	return ret;
+}
 
 ///////////// MANAGE REQUESTS /////////////////
 
 int Server::_fillRecvs(std::string buff) {
+	size_t space_pos;
+	size_t backr_pos;
 	std::string::iterator begin;
 	std::string::iterator space;
 	std::string::iterator backr;
@@ -144,22 +146,43 @@ int Server::_fillRecvs(std::string buff) {
 
 	for (int i = 0; i < lines; i++) {
 		begin = buff.begin();
-		space = begin + buff.find(' ');
-		backr = begin + buff.find('\r');
-		_recvs.push_back(std::make_pair(std::string(begin, space), std::string(space + 1, backr)));
+		space_pos = buff.find(' ');
+		backr_pos = buff.find('\r');
+		space = begin + space_pos;
+		backr = begin + backr_pos;
+		if (space_pos == buff.npos)
+			_recvs.push_back(std::make_pair(std::string(begin, buff.end()), std::string()));
+		else {
+			if (backr_pos == buff.npos)
+				_recvs.push_back(std::make_pair(std::string(begin, space), std::string(space + 1, buff.end())));
+			else
+				_recvs.push_back(std::make_pair(std::string(begin, space), std::string(space + 1, backr)));
+		}
 		buff.erase(begin, backr + 2);
 	}
 	return lines;
 }
 
-int Server::_manageRequest(pollfd pfd) {
+size_t Server::_recvAll(pollfd pfd) {
+	char buffer[BUFFER_SIZE + 1];
 	int size;
-	int lines;
 
-	memset(_buff, 0, BUFFER_SIZE);
-	size = recv(pfd.fd, _buff, BUFFER_SIZE, 0);
+	if ((size = recv(pfd.fd, buffer, BUFFER_SIZE, 0)) == -1)
+		return -1;
 	if (size == 0)
 		return _disconnectUser(pfd, 0);
+	buffer[size] = 0;
+	_buff += buffer;
+	std::cout << "buffer = " << _buff << std::endl;
+	return 0;
+}
+
+int Server::_manageRequest(pollfd pfd) {
+	int ret;
+	int lines;
+
+	if ((ret = _recvAll(pfd)))
+		return ret;
 	_recvs.clear();
 	lines = _fillRecvs(std::string(_buff));
 	for (int i = 0; i < lines; i++) {
@@ -168,6 +191,7 @@ int Server::_manageRequest(pollfd pfd) {
 		std::cout << BLUE BOLD "[ircserv]" RESET BLUE " Recv    <--    " BLUE BOLD "[Client " << pfd.fd << "]" RESET BLUE ":    " << _recvs[i].first << " " << _recvs[i].second << RESET << std::endl;
 		_manageCmd(pfd, _recvs[i]);
 	}
+	_buff.clear();
 	return 0;
 }
 
@@ -218,6 +242,10 @@ int	Server::_user(pollfd pfd, std::string args) {
 	std::string::iterator begin;
 	std::string::iterator end;
 
+	if (!_users[pfd.fd]->getFirstTry()) {
+		std::string err(":462 \033[91mUser: You may not reregister\033[00m\r\n");
+		return _sendError(pfd, err);
+	}
 	for (int i = 0; i < 4; i++) {
 		begin = args.begin();
 		if (i < 3) {
@@ -225,7 +253,6 @@ int	Server::_user(pollfd pfd, std::string args) {
 			if (end == args.end()) {
 				std::string err(":461 \033[91mUser: Not enough parameters\033[00m\r\n");
 				_sendAll(pfd.fd, err.c_str(), err.length(), 0);
-
 			}
 			argsVec.push_back(std::string(begin, end));
 			args.erase(begin, end + 1);
@@ -241,8 +268,8 @@ int	Server::_user(pollfd pfd, std::string args) {
 	_users[pfd.fd]->setHostName(argsVec[2]);
 	_users[pfd.fd]->setRealName(argsVec[3]);
 	std::string user_str = ":irc.server 001 " + _users[pfd.fd]->getNick() + " :\r\n";
-	_sendExecuted(pfd, user_str);
-	return 0;
+	_users[pfd.fd]->setFirstTry(false);
+	return _sendExecuted(pfd, user_str);
 }
 
 int	Server::_nick(pollfd pfd, std::string buff) {
@@ -265,7 +292,6 @@ int	Server::_nick(pollfd pfd, std::string buff) {
 		old_nick = _users[pfd.fd]->getNick();
 	_users[pfd.fd]->setNick(buff);
 	std::string msg = ":" + old_nick + " NICK " + _users[pfd.fd]->getNick() + "\r\n";
-	_users[pfd.fd]->setFirstTry(false);
 	return _sendExecuted(pfd, msg);
 }
 

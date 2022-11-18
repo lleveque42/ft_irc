@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/18 20:54:52 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/18 23:48:16 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ class Server
 		std::map<int, User*>	_users;
 		std::vector<pollfd>		_pfds;
 		int						_fd_count;
-		char					_buff[BUFFER_SIZE + 1];
+		std::string				_buff;
 		std::vector<std::pair<std::string, std::string> > _recvs;
 		std::map<const std::string, cmds> _cmds;
 
@@ -76,6 +76,7 @@ class Server
 		int		_fillRecvs(std::string buff);
 		int		_manageCmd(pollfd pfd, std::pair<std::string, std::string> cmd);
 		int		_sendAll(int fd, const char *buf, size_t len, int flags);
+		size_t	_recvAll(pollfd pfd);
 		int		_sendError(pollfd pfd, std::string msg);
 		int		_sendExecuted(pollfd pfd, std::string ret);
 		int		_disconnectUser(pollfd pfd, int ret);
