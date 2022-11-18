@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/18 17:54:11 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/18 17:59:32 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ class Server
 		int		_disconnectUser(pollfd pfd, int ret);
 		bool	_validChars(std::string s);
 		bool	_nickAlreadyUsed(User *current, std::string s);
-		// void	_serverLogs(pollfd pfds);
-		// void	_serverLogs(pollfd pfds);
+		void	_sendLogs(pollfd pfds);
+		void	_recvLogs(pollfd pfds);
 
 };

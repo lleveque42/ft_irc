@@ -235,11 +235,12 @@ int	Server::_user(pollfd pfd, std::string args) {
 	// _users[pfd.fd]->setMode(argsVec[1]);
 	_users[pfd.fd]->setHostName(argsVec[2]);
 	_users[pfd.fd]->setRealName(argsVec[3]);
+	std::string user_str = ":best.server 001 " + _users[pfd.fd]->getNick() + " :Welcome to IRC\r\n";
+	send(pfd.fd, user_str.c_str(), user_str.length(), 0);
 	return 0;
 }
 
 int	Server::_nick(pollfd pfd, std::string buff) {
-	std::cout << "NICK\n";
 	if (buff.empty())
 	{
 		std::string err(":431  \033[91mNick: No nickname provided\033[00m\r\n");
@@ -261,13 +262,28 @@ int	Server::_nick(pollfd pfd, std::string buff) {
 		std::cout << RED BOLD "[Server]" RESET RED " Send    -->    " RED BOLD "[Client " << pfd.fd << "] " RESET RED << _users[pfd.fd]->getNick() << ": Nickname is already in use" << RESET << std::endl;
 		return 1;
 	}
-	std::string old_nick = _users[pfd.fd]->getNick();
+	std::string old_nick;
+	if (_users[pfd.fd]->getNick().empty())
+		old_nick = buff;
+	else
+		old_nick = _users[pfd.fd]->getNick();
 	_users[pfd.fd]->setNick(buff);
-	std::string msg = "\033[92mNick: " + old_nick + " changed is nickname to " + buff + "\033[00m\r\n";
+	std::string msg = ":" + old_nick + " NICK " + _users[pfd.fd]->getNick() + "\033[92mNick: " + old_nick + " changed is nickname to " + buff + "\033[00m\r\n";
 	send(pfd.fd, msg.c_str(), msg.length(), 0);
+
 	std::cout << GREEN BOLD "[Server]" RESET GREEN " Send    -->    " GREEN BOLD "[Client " << pfd.fd << "] " RESET GREEN << _users[pfd.fd]->getNick() << ":    Nick: " <<  old_nick <<  " changed is nickname to " << buff << RESET << std::endl;
 	return 0;
 }
+
+/////////////////  HELPERS  ////////////////////
+
+// void	_sendLogs(pollfd pfd){
+// 	std::cout << GREEN BOLD "[Server]" RESET GREEN " Send    -->    " GREEN BOLD "[Client " << pfd.fd << "] " RESET GREEN << _users[pfd.fd]->getNick() << ":    Nick: " <<  old_nick <<  " changed is nickname to " << buff << RESET << std::endl;
+// }
+
+// void	_recvLogs(pollfd pfd, std::string cmd){
+// 	std::cout << BLUE BOLD "[Server]" RESET BLUE " Recv <-- " BLUE BOLD "[Client " << pfd.fd << "]" RESET BLUE ":    " << _recvs[i].first << " " << _recvs[i].second << RESET << std::endl;
+// }
 
 bool	Server::_validChars(std::string s) {
 	for(size_t i = 0; i < s.length(); i++)
