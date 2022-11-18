@@ -112,8 +112,8 @@ void Server::launch() {
 		if (_users[pfd.fd]->getAuth())
 			std::cout << RED BOLD "[Server]" RESET RED " Send    -->    " RED BOLD "[Client " << pfd.fd << "]" RESET RED ":    Has left the server" << RESET << std::endl;
 		else if (!_users[pfd.fd]->getTriedToAuth()) {
-			std::string err(":461 \033[93mConnection refused: No password provided\033[00m");
-			send(pfd.fd, err.c_str(), err.length(), 0);
+			std::string err(":461 \033[91mConnection refused: No password provided\033[00m");
+			_sendAll(pfd.fd, err.c_str(), err.length(), 0);
 			std::cout << RED BOLD "[Server]" RESET RED " Send    -->    " RED BOLD "[Client " << pfd.fd << "]" RESET RED ":    Connection refused: No password provided" << RESET << std::endl;
 		}
 		close(pfd.fd);
@@ -171,32 +171,70 @@ int Server::_manageCmd(pollfd pfd, std::pair<std::string, std::string> cmd) {
 	return 0;
 }
 
+int Server::_sendAll(int fd, const void *buf, size_t len, int flags) {
+	size_t sent = 0;
+	size_t toSend = len;
+	size_t ret = 0;
+
+	while (sent < len) {
+		ret = send(fd, buf + sent, toSend, flags);
+		if (ret == -1)
+			return ret;
+		sent += ret;
+		toSend -= ret;
+	}
+	return 0;
+}
+
 /////////////////  COMMANDS  ////////////////////
 // Keep ret values ???
 
-int	Server::_pass(pollfd pfd, std::string arg) {
+int	Server::_pass(pollfd pfd, std::string args) {
 	_users[pfd.fd]->setTriedToAuth(true);
 	if (_users[pfd.fd]->getAuth())
 		return 0; //voir quoi faire quand deja authentifié
-	if (arg != _password) {
+	if (args != _password) {
 		std::string err(":464 \033[91mConnection refused: Password incorrect\033[00m\r\n");
-		send(pfd.fd, err.c_str(), err.length(), 0);
+		_sendAll(pfd.fd, err.c_str(), err.length(), 0);
 		std::cout << RED BOLD "[Server]" RESET RED " Send    -->    " RED BOLD "[Client " << pfd.fd << "]" RESET RED ":    Connection refused: Password incorrect" << RESET << std::endl;
 		return 1;
 	}
 	if (!_users[pfd.fd]->getAuth()) {
 		_users[pfd.fd]->setAuth(true);
 		std::string ok("\033[92mConnection accepted !\n\033[093mWelcome to our IRC server !\033[00m\r\n");
-		send(pfd.fd, ok.c_str(), ok.length(), 0);
+		_sendAll(pfd.fd, ok.c_str(), ok.length(), 0);
 		std::cout << GREEN BOLD "[Server]" RESET GREEN " Send    -->    " GREEN BOLD "[Client " << pfd.fd << "]" RESET GREEN ":    Connection accepted: Password correct" << RESET << std::endl;
 	}
 	return 0;
 }
 
-int	Server::_user(pollfd pfd, std::string buff) {
-	std::cout << "USER\n";
-	(void)pfd;
-	(void)buff;
+int	Server::_user(pollfd pfd, std::string args) {
+	std::vector<std::string> argsVec;
+	std::string::iterator begin;
+	std::string::iterator end;
+
+	for (int i = 0; i < 4; i++) {
+		begin = args.begin();
+		if (i < 3) {
+			end = begin + args.find(' ');
+			if (end == args.end()) {
+				std::string err(":461 \033[91mUser: Not enough parameters\033[00m\r\n");
+				_sendAll(pfd.fd, err.c_str(), err.length(), 0);
+
+			}
+			argsVec.push_back(std::string(begin, end));
+			args.erase(begin, end + 1);
+		}
+		else {
+			begin++;
+			argsVec.push_back(std::string(begin, args.end()));
+			args.erase(begin, args.end());
+		}
+	}
+	_users[pfd.fd]->setUserName(argsVec[0]);
+	// _users[pfd.fd]->setMode(argsVec[1]);
+	_users[pfd.fd]->setHostName(argsVec[2]);
+	_users[pfd.fd]->setRealName(argsVec[3]);
 	return 0;
 }
 

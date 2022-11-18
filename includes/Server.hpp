@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/18 15:15:09 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/18 17:06:08 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,8 +75,9 @@ class Server
 		int		_manageRequest(pollfd pfds);
 		int		_fillRecvs(std::string buff);
 		int		_manageCmd(pollfd pfd, std::pair<std::string, std::string> cmd);
-		int		_pass(pollfd pfds, std::string buff);
-		int		_user(pollfd pfds, std::string buff);
+		int		_sendAll(int fd, const void *buf, size_t len, int flags);
+		int		_pass(pollfd pfds, std::string args);
+		int		_user(pollfd pfds, std::string args);
 		int		_nick(pollfd pfds, std::string buff);
 		int		_disconnectUser(pollfd pfd, int ret);
 };

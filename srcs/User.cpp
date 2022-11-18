@@ -12,8 +12,10 @@
 
 #include "../includes/User.hpp"
 
-User::User(int sd) : _user_sd(sd), _auth(0), _triedToAuth(0), _nick(""), _user_name("")
-{}
+User::User(int sd) : _user_sd(sd), _auth(0), _triedToAuth(0), _nick(), _user_name(),
+_real_name(), _host_name()
+{
+}
 
 User::~User()
 {
@@ -31,12 +33,36 @@ std::string const &User::getUserName() const {
 	return _user_name;
 }
 
+std::string const &User::getHostName() const {
+	return _host_name;
+}
+
+std::string const &User::getRealName() const {
+	return _real_name;
+}
+
 bool const &User::getAuth() const {
 	return _auth;
 }
 
 bool const &User::getTriedToAuth() const {
 	return _triedToAuth;
+}
+
+void User::setNick(std::string value) {
+	_nick = std::string(value);
+}
+
+void User::setHostName(std::string value) {
+	_host_name = std::string(value);
+}
+
+void User::setUserName(std::string value) {
+	_user_name = std::string(value);
+}
+
+void User::setRealName(std::string value) {
+	_real_name = std::string(value);
 }
 
 void User::setAuth(bool value) {

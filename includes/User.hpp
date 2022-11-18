@@ -20,7 +20,10 @@ class User
 		bool		_auth;
 		bool		_triedToAuth;
 		std::string	_nick;
+		std::string	_mode;
 		std::string	_user_name;
+		std::string	_real_name;
+		std::string	_host_name;
 		User();
 
 	public:
@@ -29,8 +32,14 @@ class User
 		int const			&getUserSd() const;
 		std::string const	&getNick() const;
 		std::string const	&getUserName() const;
+		std::string const	&getHostName() const;
+		std::string const	&getRealName() const;
 		bool const			&getAuth() const;
 		bool const			&getTriedToAuth() const;
+	void					setNick(std::string value);
+	void					setUserName(std::string value);
+	void					setHostName(std::string value);
+	void					setRealName(std::string value);
 		void				setAuth(bool value);
 		void				setTriedToAuth(bool value);
 };
