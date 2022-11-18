@@ -20,7 +20,6 @@ User::~User()
 }
 
 int const &User::getUserSd() const {
-
 	return _user_sd;
 }
 

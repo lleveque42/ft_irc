@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 08:43:59 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/16 17:46:58 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/18 12:23:39 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,13 @@
 #define ARG_ERR "ircserv: 2 arguments needed:\n\nUsage is: ./ircserv <port> <password>\n\t<port>: port number on wich your IRC server will be listening to for incoming IRC connections\n\t<password>: it will be needed by any IRC client that tries to connect to your server"
 #define PORT_ERR  "Invalid port, use only number between 1024 and 65535"
 #define PASSWORD_ERR "Password must not be empty"
+
+bool stop = 0;
+
+void sig_handler(int sig) {
+	if (sig == SIGINT || sig == SIGQUIT)
+		stop = 1;
+}
 
 bool	check_input(int ac, char **av)
 {
@@ -63,7 +70,10 @@ int	main(int ac, char **av)
 	try
 	{
 		server->setup();
-		server->launch();
+		signal(SIGINT, sig_handler);
+		signal(SIGQUIT, sig_handler);
+		while (!stop)
+			server->launch();
 	}
 	catch(const std::exception& e)
 	{

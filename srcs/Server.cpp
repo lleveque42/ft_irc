@@ -12,18 +12,28 @@
 
 #include "../includes/Server.hpp"
 
-Server::Server(char *port, char *password) : _password(password), _port(port), _pfds(), _fd_count(0)
-{
+Server::Server(char *port, char *password) : _password(password), _port(port), _pfds(), _fd_count(0) {
 	std::cout << BLUE << "Server port : " << UL << _port << RESET << std::endl;
 	std::cout << BLUE << "Server password : " << UL << _password << RESET << std::endl;
 	_initCmd();
 }
 
-Server::~Server()
-{
-	std::cout << "Destructor server\n";
-	// Delete pair.second in _users
+void Server::clear() {
+	_recvs.clear();
+	_cmds.clear();
+	for (std::map<int, User*>::iterator it = _users.begin(); it != _users.end(); it++)
+		delete (*it).second;
+	_users.clear();
+	for (std::vector<pollfd>::iterator it = _pfds.begin(); it != _pfds.end(); it++)
+		close(it->fd);
+	_pfds.clear();
 }
+
+Server::~Server() {
+	clear();
+}
+
+//////////////// INIT ///////////////////
 
 void Server::_initCmd() {
 	_cmds["PASS"] = &Server::_pass;
@@ -67,50 +77,58 @@ void Server::setup()
 }
 
 void Server::launch() {
-	std::cout << "ircserv: waiting for connections..." << std::endl;
-	while (1) {
-		if (poll(&_pfds[0], _fd_count, -1) == -1)
-		{
-			std::cout << "throw poll" << std::endl;
+	if (_fd_count == 1)
+		std::cout << "ircserv: waiting for connections..." << std::endl;
+	if (poll(&_pfds[0], _fd_count, -1) == -1) {
+		if (errno != EINTR)
 			throw Exception::poll();
+		return;
+	}
+	if (_pfds[0].revents == POLLIN)
+		_acceptUser();
+	std::vector<pollfd>::iterator ite = _pfds.end();
+	for (std::vector<pollfd>::iterator it = _pfds.begin() + 1; it != ite; it++)
+		if ((*it).revents == POLLIN)
+			_manageRequest(*it);
+}
+
+//////////////// MANAGE USERS ///////////////////
+
+	void Server::_acceptUser() {
+		int new_sd;
+		sockaddr_storage new_addr; // ou toutes les infos de la nouvelle connexion vont aller
+		socklen_t new_addr_size; // sizeof sockaddr_storage
+
+		new_addr_size = sizeof new_addr;
+		new_sd = accept(_sd, (sockaddr *)&new_addr, &new_addr_size); // accepte les connections entrantes, le nouveau fd sera pour recevoir et envoyer des appels
+		_users.insert(std::pair<int, User*>(new_sd, new User(new_sd))); // pair first garder user_id ? Ou mettre le sd
+		_pfds.push_back(pollfd());
+		_pfds.back().fd = new_sd;
+		_pfds.back().events = POLLIN;
+		_fd_count++;
+	}
+
+	int Server::_disconnectUser(pollfd pfd, int ret) {
+		if (_users[pfd.fd]->getAuth())
+			std::cout << RED BOLD "[Server]" RESET RED " Send    -->    " RED BOLD "[Client " << pfd.fd << "]" RESET RED ":    Has left the server" << RESET << std::endl;
+		else if (!_users[pfd.fd]->getTriedToAuth()) {
+			std::string err(":461 \033[93mConnection refused: No password provided\033[00m");
+			send(pfd.fd, err.c_str(), err.length(), 0);
+			std::cout << RED BOLD "[Server]" RESET RED " Send    -->    " RED BOLD "[Client " << pfd.fd << "]" RESET RED ":    Connection refused: No password provided" << RESET << std::endl;
 		}
-		if (_pfds[0].revents == POLLIN)
-			_acceptUser();
-		std::vector<pollfd>::iterator ite = _pfds.end();
-		for (std::vector<pollfd>::iterator it = _pfds.begin() + 1; it != ite; it++)
-			if ((*it).revents == POLLIN)
-				_manageRequest(*it);
+		close(pfd.fd);
+		delete _users[pfd.fd];
+		std::vector<pollfd>::iterator it;
+		for (it = _pfds.begin() + 1; it->fd != pfd.fd; it++)
+			;
+		_pfds.erase(it);
+		_users.erase(pfd.fd);
+		_recvs.clear();
+		_fd_count--;
+		return ret;
 	}
-}
 
-void Server::_acceptUser() {
-	int new_sd;
-	sockaddr_storage new_addr; // ou toutes les infos de la nouvelle connexion vont aller
-	socklen_t new_addr_size; // sizeof sockaddr_storage
-
-	new_addr_size = sizeof new_addr;
-	new_sd = accept(_sd, (sockaddr *)&new_addr, &new_addr_size); // accepte les connections entrantes, le nouveau fd sera pour recevoir et envoyer des appels
-	_users.insert(std::pair<int, User*>(new_sd, new User(new_sd))); // pair first garder user_id ? Ou mettre le sd
-	_pfds.push_back(pollfd());
-	_pfds.back().fd = new_sd;
-	_pfds.back().events = POLLIN;
-	_fd_count++;
-}
-
-void Server::_disconnectUser(pollfd pfd) {
-	if (_users[pfd.fd]->getAuth())
-		std::cout << RED BOLD "[Server]" RESET RED " Send    -->    " RED BOLD "[Client " << pfd.fd << "]" RESET RED ":    Has left the server" << RESET << std::endl;
-	else if (!_users[pfd.fd]->getTriedToAuth()) {
-		std::string err(":461 \033[91mConnection refused: No password provided\033[00m");
-		send(pfd.fd, err.c_str(), err.length(), 0);
-		std::cout << RED BOLD "[Server]" RESET RED " Send    -->    " RED BOLD "[Client " << pfd.fd << "]" RESET RED ":    Connection refused: No password provided" << RESET << std::endl;
-	}
-	close(pfd.fd);
-	delete _users[pfd.fd];
-	_users.erase(pfd.fd);
-	_fd_count--;
-}
-
+///////////// MANAGE REQUESTS /////////////////
 
 int Server::_fillRecvs(std::string buff) {
 	std::string::iterator begin;
@@ -125,10 +143,6 @@ int Server::_fillRecvs(std::string buff) {
 		_recvs.push_back(std::make_pair(std::string(begin, space), std::string(space + 1, backr)));
 		buff.erase(begin, backr + 2);
 	}
-	std::cout << "-----------------------------------------\n";
-	for (size_t i = 0; i < _recvs.size(); i++)
-		std::cout << "first: " << _recvs[i].first << " || second: " << _recvs[i].second << std::endl;
-	std::cout << "-----------------------------------------\n";
 	return lines;
 }
 
@@ -136,37 +150,22 @@ int Server::_manageRequest(pollfd pfd) {
 	int size;
 	int lines;
 
+	memset(_buff, 0, BUFFER_SIZE);
 	size = recv(pfd.fd, _buff, BUFFER_SIZE, 0);
 	if (size == 0)
-	{
-		std::cout << "size 0 recv\n";
-		_disconnectUser(pfd);
-		return 0;
-	}
+		return _disconnectUser(pfd, 0);
+	_recvs.clear();
 	lines = _fillRecvs(std::string(_buff));
 	for (int i = 0; i < lines; i++) {
-		std::cout << GREEN BOLD "[Server]" RESET GREEN " Recv    <--    " GREEN BOLD "[Client " << pfd.fd << "]" RESET GREEN ":    " << _recvs[i].first << " " << _recvs[i].second << RESET << std::endl;
-		// if (_recvs[i].first == "CAP" && _recvs[i].second == "LS") // checker cap
-		// 	continue;
+		if (_recvs[i].first == "NICK" && !_users[pfd.fd]->getAuth())
+			return _disconnectUser(pfd, 1);
+		std::cout << BLUE BOLD "[Server]" RESET BLUE " Recv    <--    " BLUE BOLD "[Client " << pfd.fd << "]" RESET BLUE ":    " << _recvs[i].first << " " << _recvs[i].second << RESET << std::endl;
 		_manageCmd(pfd, _recvs[i]);
-		if (!_users[pfd.fd]->getAuth() && _users[pfd.fd]->getTriedToAuth()) {
-			std::cout << "NOT AUTH\n";
-			_recvs.clear();
-			std::cout << "============\n";
-			for (size_t i = 0; i < _recvs.size(); i++)
-				std::cout << "first: " << _recvs[i].first << " || second: " << _recvs[i].second << std::endl;
-			std::cout << "===========\n";
-			_disconnectUser(pfd);
-			return 1;
-		}
 	}
-	_recvs.clear();
 	return 0;
 }
 
 int Server::_manageCmd(pollfd pfd, std::pair<std::string, std::string> cmd) {
-	if (cmd.first == "CAP" && cmd.second == "LS") // checker cap
-		return 0;
 	if (_cmds.find(cmd.first) != _cmds.end())
 		(this->*_cmds[cmd.first])(pfd, cmd.second);
 	return 0;
@@ -176,17 +175,21 @@ int Server::_manageCmd(pollfd pfd, std::pair<std::string, std::string> cmd) {
 // Keep ret values ???
 
 int	Server::_pass(pollfd pfd, std::string arg) {
+	_users[pfd.fd]->setTriedToAuth(true);
 	if (_users[pfd.fd]->getAuth())
 		return 0; //voir quoi faire quand deja authentifié
 	if (arg != _password) {
-		_users[pfd.fd]->setTriedToAuth(true);
 		std::string err(":464 \033[91mConnection refused: Password incorrect\033[00m\r\n");
 		send(pfd.fd, err.c_str(), err.length(), 0);
 		std::cout << RED BOLD "[Server]" RESET RED " Send    -->    " RED BOLD "[Client " << pfd.fd << "]" RESET RED ":    Connection refused: Password incorrect" << RESET << std::endl;
 		return 1;
 	}
-	if (!_users[pfd.fd]->getAuth())
+	if (!_users[pfd.fd]->getAuth()) {
 		_users[pfd.fd]->setAuth(true);
+		std::string ok("\033[92mConnection accepted !\n\033[093mWelcome to our IRC server !\033[00m\r\n");
+		send(pfd.fd, ok.c_str(), ok.length(), 0);
+		std::cout << GREEN BOLD "[Server]" RESET GREEN " Send    -->    " GREEN BOLD "[Client " << pfd.fd << "]" RESET GREEN ":    Connection accepted: Password correct" << RESET << std::endl;
+	}
 	return 0;
 }
 
