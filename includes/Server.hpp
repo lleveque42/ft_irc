@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
+/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/18 17:59:32 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/18 19:27:37 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,8 @@ class Server
 		int		_fillRecvs(std::string buff);
 		int		_manageCmd(pollfd pfd, std::pair<std::string, std::string> cmd);
 		int		_sendAll(int fd, const char *buf, size_t len, int flags);
+		int		_sendError(pollfd pfd, std::string msg);
+		int		_sendExecuted(pollfd pfd, std::string ret);
 		int		_pass(pollfd pfds, std::string args);
 		int		_user(pollfd pfds, std::string args);
 		int		_nick(pollfd pfds, std::string buff);

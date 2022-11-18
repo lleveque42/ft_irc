@@ -235,43 +235,38 @@ int	Server::_user(pollfd pfd, std::string args) {
 	// _users[pfd.fd]->setMode(argsVec[1]);
 	_users[pfd.fd]->setHostName(argsVec[2]);
 	_users[pfd.fd]->setRealName(argsVec[3]);
-	std::string user_str = ":best.server 001 " + _users[pfd.fd]->getNick() + " :Welcome to IRC\r\n";
+	std::string user_str = ":best.server 001 " + _users[pfd.fd]->getNick() + " :\r\n";
 	send(pfd.fd, user_str.c_str(), user_str.length(), 0);
 	return 0;
 }
 
+int Server::_sendError(pollfd pfd, std::string err) {
+	_sendAll(pfd.fd, err.c_str(), err.length(), 0);
+	std::cout << RED BOLD "[Server]" RESET RED " Send    -->    " RED BOLD "[Client " << pfd.fd << "]" RESET RED << ":    " << err << RESET;
+	return 1;
+}
+
+int Server::_sendExecuted(pollfd pfd, std::string ret) {
+	_sendAll(pfd.fd, ret.c_str(), ret.length(), 0);
+	std::cout << GREEN BOLD "[Server]" RESET GREEN " Send    -->    " GREEN BOLD "[Client " << pfd.fd << "]" RESET GREEN << ":    " << ret << RESET;
+	return 1;
+}
+
 int	Server::_nick(pollfd pfd, std::string buff) {
 	if (buff.empty())
-	{
-		std::string err(":431  \033[91mNick: No nickname provided\033[00m\r\n");
-		send(pfd.fd, err.c_str(), err.length(), 0);
-		std::cout << RED BOLD "[Server]" RESET RED " Send    -->    " RED BOLD "[Client " << pfd.fd << "] " RESET RED << _users[pfd.fd]->getNick() << ": No nickname provided" << RESET << std::endl;
-		return 1;
-	}
-	if (!_validChars(buff))
-	{
-		std::string err(":432  \033[91mNick: Erroneus nickname\033[00m\r\n");
-		send(pfd.fd, err.c_str(), err.length(), 0);
-		std::cout << RED BOLD "[Server]" RESET RED " Send    -->    " RED BOLD "[Client " << pfd.fd << "] " RESET RED << _users[pfd.fd]->getNick() << ": Erroneus nickname" << RESET << std::endl;
-		return 1;
-	}
-	if (_nickAlreadyUsed(_users[pfd.fd], buff))
-	{
-		std::string err(":433  \033[91mNick: Nickname is already in use\033[00m\r\n");
-		send(pfd.fd, err.c_str(), err.length(), 0);
-		std::cout << RED BOLD "[Server]" RESET RED " Send    -->    " RED BOLD "[Client " << pfd.fd << "] " RESET RED << _users[pfd.fd]->getNick() << ": Nickname is already in use" << RESET << std::endl;
-		return 1;
-	}
+		return _sendError(pfd, ":431  \033[91mNick: No nickname provided\033[00m\r\n");
+	else if (!_validChars(buff))
+		return _sendError(pfd, ":432  \033[91mNick: Erroneus nickname\033[00m\r\n");
+	else if (_nickAlreadyUsed(_users[pfd.fd], buff))
+		return _sendError(pfd, ":433  \033[91mNick: Nickname is already in use\033[00m\r\n");
 	std::string old_nick;
 	if (_users[pfd.fd]->getNick().empty())
 		old_nick = buff;
 	else
 		old_nick = _users[pfd.fd]->getNick();
 	_users[pfd.fd]->setNick(buff);
-	std::string msg = ":" + old_nick + " NICK " + _users[pfd.fd]->getNick() + "\033[92mNick: " + old_nick + " changed is nickname to " + buff + "\033[00m\r\n";
-	send(pfd.fd, msg.c_str(), msg.length(), 0);
-
-	std::cout << GREEN BOLD "[Server]" RESET GREEN " Send    -->    " GREEN BOLD "[Client " << pfd.fd << "] " RESET GREEN << _users[pfd.fd]->getNick() << ":    Nick: " <<  old_nick <<  " changed is nickname to " << buff << RESET << std::endl;
+	std::string msg = ":" + old_nick + " NICK " + _users[pfd.fd]->getNick() + "\033[00m\r\n";
+	_sendExecuted(pfd, msg);
 	return 0;
 }
 
