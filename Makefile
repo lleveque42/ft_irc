@@ -6,7 +6,7 @@
 #    By: arudy <arudy@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/16 08:42:57 by arudy             #+#    #+#              #
-#    Updated: 2022/11/16 15:21:27 by arudy            ###   ########.fr        #
+#    Updated: 2022/11/18 10:41:36 by arudy            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -42,7 +42,7 @@ fclean: clean
 re: fclean all
 
 rc: re
-	${RM} ${OBJS} && clear
+	${RM} ${OBJS} && clear && ./ircserv 6667 lol
 
 # -include $(DEPS)
 

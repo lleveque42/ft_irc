@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
+/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/18 03:37:17 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/18 09:17:43 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ class Server
 		int						_sd;
 		std::map<int, User*>	_users;
 		std::vector<pollfd>		_pfds;
-		int						_fdCount;
+		int						_fd_count;
 		char					_buff[BUFFER_SIZE + 1];
 		std::vector<std::pair<std::string, std::string> > _recvs;
 		std::map<const std::string, cmds> _cmds;
