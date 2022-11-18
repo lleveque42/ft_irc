@@ -41,5 +41,6 @@ class User
 	void					setHostName(std::string value);
 	void					setRealName(std::string value);
 		void				setAuth(bool value);
+		void				setNick(std::string nick);
 		void				setTriedToAuth(bool value);
 };

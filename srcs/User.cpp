@@ -73,3 +73,7 @@ void User::setTriedToAuth(bool value) {
 	_triedToAuth = value;
 }
 
+void	User::setNick(std::string nick)
+{
+	_nick = nick;
+}

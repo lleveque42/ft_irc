@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/18 17:06:08 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/18 17:44:41 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,4 +80,7 @@ class Server
 		int		_user(pollfd pfds, std::string args);
 		int		_nick(pollfd pfds, std::string buff);
 		int		_disconnectUser(pollfd pfd, int ret);
+		bool	_validChars(std::string s);
+		bool	_nickAlreadyUsed(User *current, std::string s);
+
 };
