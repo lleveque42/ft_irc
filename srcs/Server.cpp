@@ -171,13 +171,13 @@ int Server::_manageCmd(pollfd pfd, std::pair<std::string, std::string> cmd) {
 	return 0;
 }
 
-int Server::_sendAll(int fd, const void *buf, size_t len, int flags) {
+int Server::_sendAll(int fd, const char *buf, size_t len, int flags) {
 	size_t sent = 0;
 	size_t toSend = len;
-	size_t ret = 0;
+	int ret = 0;
 
 	while (sent < len) {
-		ret = send(fd, buf + sent, toSend, flags);
+		ret = send(fd, (buf + sent), toSend, flags);
 		if (ret == -1)
 			return ret;
 		sent += ret;

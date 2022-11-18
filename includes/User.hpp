@@ -36,11 +36,10 @@ class User
 		std::string const	&getRealName() const;
 		bool const			&getAuth() const;
 		bool const			&getTriedToAuth() const;
-	void					setNick(std::string value);
-	void					setUserName(std::string value);
-	void					setHostName(std::string value);
-	void					setRealName(std::string value);
+		void				setNick(std::string value);
+		void				setUserName(std::string value);
+		void				setHostName(std::string value);
+		void				setRealName(std::string value);
 		void				setAuth(bool value);
-		void				setNick(std::string nick);
 		void				setTriedToAuth(bool value);
 };
