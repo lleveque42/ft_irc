@@ -193,6 +193,37 @@ int	Server::_pass(pollfd pfd, std::string arg) {
 	return 0;
 }
 
+int	Server::_nick(pollfd pfd, std::string buff) {
+	std::cout << "NICK\n";
+	if (buff.empty())
+	{
+		std::string err(":431  \033[91mNick: No nickname provided\033[00m\r\n");
+		send(pfd.fd, err.c_str(), err.length(), 0);
+		std::cout << RED BOLD "[Server]" RESET RED " Send    -->    " RED BOLD "[Client " << pfd.fd << "] " RESET RED << _users[pfd.fd]->getNick() << ": No nickname provided" << RESET << std::endl;
+		return 1;
+	}
+	if (!_validChars(buff))
+	{
+		std::string err(":432  \033[91mNick: Erroneus nickname\033[00m\r\n");
+		send(pfd.fd, err.c_str(), err.length(), 0);
+		std::cout << RED BOLD "[Server]" RESET RED " Send    -->    " RED BOLD "[Client " << pfd.fd << "] " RESET RED << _users[pfd.fd]->getNick() << ": Erroneus nickname" << RESET << std::endl;
+		return 1;
+	}
+	if (_nickAlreadyUsed(_users[pfd.fd], buff))
+	{
+		std::string err(":433  \033[91mNick: Nickname is already in use\033[00m\r\n");
+		send(pfd.fd, err.c_str(), err.length(), 0);
+		std::cout << RED BOLD "[Server]" RESET RED " Send    -->    " RED BOLD "[Client " << pfd.fd << "] " RESET RED << _users[pfd.fd]->getNick() << ": Nickname is already in use" << RESET << std::endl;
+		return 1;
+	}
+	std::string old_nick = _users[pfd.fd]->getNick();
+	_users[pfd.fd]->setNick(buff);
+	std::string msg = "\033[92mNick: " + old_nick + " changed is nickname to " + buff + "\033[00m\r\n";
+	send(pfd.fd, msg.c_str(), msg.length(), 0);
+	std::cout << GREEN BOLD "[Server]" RESET GREEN " Send    -->    " GREEN BOLD "[Client " << pfd.fd << "] " RESET GREEN << _users[pfd.fd]->getNick() << ":    Nick: " <<  old_nick <<  " changed is nickname to " << buff << RESET << std::endl;
+	return 0;
+}
+
 int	Server::_user(pollfd pfd, std::string buff) {
 	std::cout << "USER\n";
 	(void)pfd;
@@ -200,9 +231,16 @@ int	Server::_user(pollfd pfd, std::string buff) {
 	return 0;
 }
 
-int	Server::_nick(pollfd pfd, std::string buff) {
-	std::cout << "NICK\n";
-	(void)pfd;
-	(void)buff;
-	return 0;
+bool	Server::_validChars(std::string s) {
+	for(size_t i = 0; i < s.length(); i++)
+		if (s[i] < 33 && s[i] > 126)
+			return false;
+	return true;
+}
+
+bool	Server::_nickAlreadyUsed(User *current, std::string s) {
+	for (std::map<int, User*>::iterator it = _users.begin(); it != _users.end(); it++)
+		if (it->second->getNick() == s && it->second->getUserSd() != current->getUserSd())
+			return true;
+	return false;
 }

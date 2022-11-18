@@ -32,5 +32,6 @@ class User
 		bool const			&getAuth() const;
 		bool const			&getTriedToAuth() const;
 		void				setAuth(bool value);
+		void				setNick(std::string nick);
 		void				setTriedToAuth(bool value);
 };
