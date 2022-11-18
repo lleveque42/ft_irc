@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 08:43:59 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/18 12:23:39 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/18 17:01:08 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,19 +67,18 @@ int	main(int ac, char **av)
 	if (!check_input(ac, av))
 		return 1;
 	Server *server = new Server(av[1], av[2]);
-	try
-	{
-		server->setup();
-		signal(SIGINT, sig_handler);
-		signal(SIGQUIT, sig_handler);
-		while (!stop)
+	server->setup();
+	while (!stop) {
+		try {
+			signal(SIGINT, sig_handler);
+			signal(SIGQUIT, sig_handler);
 			server->launch();
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << std::strerror(errno) << std::endl;
-		delete server;
-		return 1;
+		}
+		catch(const std::exception& e) {
+			std::cerr << e.what() << std::strerror(errno) << std::endl;
+			delete server;
+			return 1;
+		}
 	}
 	delete server;
 	return 0;
