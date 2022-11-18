@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 08:43:59 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/18 17:01:08 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/18 21:41:51 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,17 +27,14 @@ void sig_handler(int sig) {
 
 bool	check_input(int ac, char **av)
 {
-	if (ac != 3)
-	{
+	if (ac != 3) {
 		std::cerr << ARG_ERR << std::endl;
 		return 0;
 	}
 	const std::string port(av[1]);
 	std::string::const_iterator it = port.begin();
-	for (; it != port.end(); it++)
-	{
-		if (!std::isdigit(*it))
-		{
+	for (; it != port.end(); it++) {
+		if (!std::isdigit(*it)) {
 			std::cerr << PORT_ERR << std::endl;
 			return 0;
 		}
@@ -54,8 +51,7 @@ bool	check_input(int ac, char **av)
 		return 0;
 	}
 	const std::string password(av[1]);
-	if (password.empty())
-	{
+	if (password.empty()) {
 		std::cerr << PASSWORD_ERR << std::endl;
 		return 0;
 	}
@@ -67,15 +63,23 @@ int	main(int ac, char **av)
 	if (!check_input(ac, av))
 		return 1;
 	Server *server = new Server(av[1], av[2]);
-	server->setup();
+	try {
+		server->setup();
+	}
+	catch(const std::exception &e) {
+		std::cerr << RED << "Server couldn't be created" << std::endl;
+		std::cerr << e.what() << std::strerror(errno) << RESET << std::endl;
+		delete server;
+		return 1;
+	}
 	while (!stop) {
 		try {
 			signal(SIGINT, sig_handler);
 			signal(SIGQUIT, sig_handler);
 			server->launch();
 		}
-		catch(const std::exception& e) {
-			std::cerr << e.what() << std::strerror(errno) << std::endl;
+		catch(const std::exception &e) {
+			std::cerr << RED << e.what() << std::strerror(errno) << RESET << std::endl;
 			delete server;
 			return 1;
 		}
