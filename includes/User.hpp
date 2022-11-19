@@ -20,6 +20,7 @@ class User
 		bool		_auth;
 		bool		_tried_to_auth;
 		bool		_first_try;
+		bool		_cap;
 		std::string	_nick;
 		std::string	_mode;
 		std::string	_user_name;
@@ -38,6 +39,7 @@ class User
 		bool const			&getAuth() const;
 		bool const			&getTriedToAuth() const;
 		bool const			&getFirstTry() const;
+		bool const			&getCap() const;
 		void				setNick(std::string value);
 		void				setUserName(std::string value);
 		void				setHostName(std::string value);
@@ -45,4 +47,5 @@ class User
 		void				setAuth(bool value);
 		void				setTriedToAuth(bool value);
 		void				setFirstTry(bool value);
+		void				setCap(bool value);
 };

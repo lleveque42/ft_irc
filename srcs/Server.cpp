@@ -184,6 +184,7 @@ size_t Server::_recvAll(pollfd pfd) {
 int Server::_manageRequest(pollfd pfd) {
 	int ret;
 	int lines;
+	int status;
 	// int size;
 
 	if ((ret = _recvAll(pfd)))
@@ -192,18 +193,60 @@ int Server::_manageRequest(pollfd pfd) {
 	lines = _fillRecvs(std::string(_buff));
 	_buff.clear();
 	for (int i = 0; i < lines; i++) {
-		if (_recvs[i].first == "NICK" && !_users[pfd.fd]->getAuth())
-			return _disconnectUser(pfd, 1);
 		std::cout << BLUE BOLD "[ircserv]" RESET BLUE " Recv    <--    " BLUE BOLD "[Client " << pfd.fd << "]" RESET BLUE ":    " << _recvs[i].first << " " << _recvs[i].second << RESET << std::endl;
-		_manageCmd(pfd, _recvs[i]);
+		if ((status = _manageCmd(pfd, _recvs[i])))
+		{
+			if (status == 1)
+				std::cerr << "Cmd not found!\n";
+			else if (status == 2)
+			{
+				std::cerr << "User disconnected!\n";
+				break;
+			}
+		}
 	}
 	return 0;
 }
 
 int Server::_manageCmd(pollfd pfd, std::pair<std::string, std::string> cmd) {
+	if (_users[pfd.fd]->getFirstTry())
+	{
+		if (!_users[pfd.fd]->getCap() && cmd.first == "CAP" && cmd.second == "LS")
+		{
+			std::cout << "Pas CAP\n";
+			_users[pfd.fd]->setCap(true);
+			return 0;
+		}
+		else if (!_users[pfd.fd]->getTriedToAuth() && cmd.first == "PASS")
+		{
+			std::cout << "Pas PASS\n";
+			if (!_users[pfd.fd]->getCap())
+				return _disconnectUser(pfd, 2);
+		}
+		else if (_users[pfd.fd]->getNick() == "" && cmd.first == "NICK")
+		{
+			std::cout << "Pas NICK\n";
+			if (!_users[pfd.fd]->getAuth())
+				return _disconnectUser(pfd, 2);
+		}
+		else if (!_users[pfd.fd]->getFirstTry() && cmd.first == "USER")
+		{
+			std::cout << "Pas USER\n";
+			if (_users[pfd.fd]->getNick() == "")
+				return _disconnectUser(pfd, 2);
+		}
+		else if (!_users[pfd.fd]->getCap())
+			return _disconnectUser(pfd, 2);
+		else if (!_users[pfd.fd]->getTriedToAuth())
+			return _disconnectUser(pfd, 2);
+		else if (!_users[pfd.fd]->getAuth())
+			return _disconnectUser(pfd, 2);
+		else if (_users[pfd.fd]->getNick() == "")
+			return _disconnectUser(pfd, 2);
+	}
 	if (_cmds.find(cmd.first) != _cmds.end())
-		(this->*_cmds[cmd.first])(pfd, cmd.second);
-	return 0;
+		return (this->*_cmds[cmd.first])(pfd, cmd.second);
+	return 1;
 }
 
 int Server::_sendAll(int fd, const char *buf, size_t len, int flags) {
@@ -231,7 +274,7 @@ int	Server::_pass(pollfd pfd, std::string args) {
 		std::string err(":464 \033[91mConnection refused: Password incorrect\033[00m\r\n");
 		_sendAll(pfd.fd, err.c_str(), err.length(), 0);
 		std::cout << RED BOLD "[ircserv]" RESET RED " Send    -->    " RED BOLD "[Client " << pfd.fd << "]" RESET RED ":    Connection refused: Password incorrect" << RESET << std::endl;
-		return 1;
+			return _disconnectUser(pfd, 2);
 	}
 	if (!_users[pfd.fd]->getAuth()) {
 		_users[pfd.fd]->setAuth(true);

@@ -13,7 +13,7 @@
 #include "../includes/User.hpp"
 
 User::User(int sd) : _user_sd(sd), _auth(0), _tried_to_auth(0), _first_try(true),
-_nick(), _user_name(), _real_name(), _host_name()
+_cap(false), _nick(), _user_name(), _real_name(), _host_name()
 {
 }
 
@@ -53,6 +53,10 @@ bool const &User::getFirstTry() const {
 	return _first_try;
 }
 
+bool const &User::getCap() const {
+	return _cap;
+}
+
 void User::setNick(std::string value) {
 	_nick = std::string(value);
 }
@@ -79,4 +83,8 @@ void User::setTriedToAuth(bool value) {
 
 void User::setFirstTry(bool value) {
 	_first_try = value;
+}
+
+void User::setCap(bool value) {
+	_cap = value;
 }
