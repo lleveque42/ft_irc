@@ -289,6 +289,7 @@ int	Server::_user(pollfd pfd, std::string args) {
 	std::vector<std::string> argsVec;
 	std::string::iterator begin;
 	std::string::iterator end;
+	size_t end_pos;
 
 	if (!_users[pfd.fd]->getFirstTry()) {
 		std::string err(":462 \033[91mUser: You may not reregister\033[00m\r\n");
@@ -297,8 +298,9 @@ int	Server::_user(pollfd pfd, std::string args) {
 	for (int i = 0; i < 4; i++) {
 		begin = args.begin();
 		if (i < 3) {
-			end = begin + args.find(' ');
-			if (end == args.end()) {
+			end_pos = args.find(' ');
+			end = begin + end_pos;
+			if (end_pos == args.npos) {
 				std::string err(":461 \033[91mUser: Not enough parameters\033[00m\r\n");
 				_sendAll(pfd.fd, err.c_str(), err.length(), 0);
 			}
