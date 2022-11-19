@@ -151,10 +151,10 @@ int Server::_fillRecvs(std::string buff) {
 		space = begin + space_pos;
 		backr = begin + backr_pos;
 		if (space_pos == buff.npos)
-			_recvs.push_back(std::make_pair(std::string(begin, buff.end()), std::string()));
+			_recvs.push_back(std::make_pair(std::string(begin, buff.end() - 1), std::string()));
 		else {
 			if (backr_pos == buff.npos)
-				_recvs.push_back(std::make_pair(std::string(begin, space), std::string(space + 1, buff.end())));
+				_recvs.push_back(std::make_pair(std::string(begin, space), std::string(space + 1, buff.end() - 1)));
 			else
 				_recvs.push_back(std::make_pair(std::string(begin, space), std::string(space + 1, backr)));
 		}
@@ -167,31 +167,36 @@ size_t Server::_recvAll(pollfd pfd) {
 	char buffer[BUFFER_SIZE + 1];
 	int size;
 
-	if ((size = recv(pfd.fd, buffer, BUFFER_SIZE, 0)) == -1)
-		return -1;
-	if (size == 0)
-		return _disconnectUser(pfd, 0);
-	buffer[size] = 0;
-	_buff += buffer;
-	std::cout << "buffer = " << _buff << std::endl;
+	while (1) {
+		memset(buffer, 0, BUFFER_SIZE + 1);
+		if ((size = recv(pfd.fd, buffer, BUFFER_SIZE, 0)) == -1)
+			return -1;
+		if (size == 0)
+			return _disconnectUser(pfd, 0);
+		buffer[size] = 0;
+		_buff += buffer;
+		if (_buff.find('\n') != _buff.npos)
+			break;
+	}
 	return 0;
 }
 
 int Server::_manageRequest(pollfd pfd) {
 	int ret;
 	int lines;
+	// int size;
 
 	if ((ret = _recvAll(pfd)))
 		return ret;
 	_recvs.clear();
 	lines = _fillRecvs(std::string(_buff));
+	_buff.clear();
 	for (int i = 0; i < lines; i++) {
 		if (_recvs[i].first == "NICK" && !_users[pfd.fd]->getAuth())
 			return _disconnectUser(pfd, 1);
 		std::cout << BLUE BOLD "[ircserv]" RESET BLUE " Recv    <--    " BLUE BOLD "[Client " << pfd.fd << "]" RESET BLUE ":    " << _recvs[i].first << " " << _recvs[i].second << RESET << std::endl;
 		_manageCmd(pfd, _recvs[i]);
 	}
-	_buff.clear();
 	return 0;
 }
 
