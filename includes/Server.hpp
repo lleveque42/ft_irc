@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/19 16:33:42 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/19 18:04:38 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ class Server
 		int		_sendError(pollfd pfd, std::string msg);
 		int		_sendExecuted(pollfd pfd, std::string ret);
 		int		_disconnectUser(pollfd pfd, int ret);
+		int		_accecptConnection(int id, pollfd pfd, std::pair<std::string, std::string> cmd);
 		bool	_validChars(std::string s);
 		bool	_nickAlreadyUsed(User *current, std::string s);
 		int		_pass(pollfd pfd, std::string args);
