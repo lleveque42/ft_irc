@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 08:43:59 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/18 21:41:51 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/19 16:15:28 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ int	main(int ac, char **av)
 		server->setup();
 	}
 	catch(const std::exception &e) {
-		std::cerr << RED << "Server couldn't be created" << std::endl;
+		std::cerr << ORANGE BOLD "[ircserv]" RED " Server couldn't be created:" RESET RED << std::endl;
 		std::cerr << e.what() << std::strerror(errno) << RESET << std::endl;
 		delete server;
 		return 1;
