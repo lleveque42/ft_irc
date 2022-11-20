@@ -193,7 +193,6 @@ int Server::_manageRequest(pollfd pfd) {
 	int ret;
 	int lines;
 	int status;
-	// int size;
 
 	if ((ret = _recvAll(pfd)))
 		return ret;
@@ -220,8 +219,10 @@ int Server::_manageCmd(pollfd pfd, std::pair<std::string, std::string> cmd) {
 	if (_users[pfd.fd]->getFirstTry())
 		if ((ret = _accecptConnection(pfd.fd, pfd, cmd)))
 			return ret;
-	if (!_users[pfd.fd]->getCap())
+	if (cmd.first == "CAP")
 		return 0;
+	// if (!_users[pfd.fd]->getCap())
+	// 	return 0;
 	if (_cmds.find(cmd.first) != _cmds.end())
 		return (this->*_cmds[cmd.first])(pfd, cmd.second);
 	return 3;
@@ -358,18 +359,15 @@ bool	Server::_nickAlreadyUsed(User *current, std::string s) {
 int Server::_accecptConnection(int id, pollfd pfd, std::pair<std::string, std::string> cmd) {
 	if (!_users[id]->getCap() && cmd.first == "CAP" && cmd.second == "LS")
 		return _users[id]->setCap(true), 0;
-	else if (!_users[id]->getTriedToAuth() && cmd.first == "PASS") {
+	else if (!_users[id]->getTriedToAuth() && cmd.first == "PASS")
 		if (!_users[id]->getCap())
 			return _disconnectUser(pfd, 2);
-	}
-	else if (_users[id]->getNick() == "" && cmd.first == "NICK") {
+	else if (_users[id]->getNick() == "" && cmd.first == "NICK")
 		if (!_users[id]->getAuth())
 			return _disconnectUser(pfd, 2);
-	}
-	else if (cmd.first == "USER") {
+	else if (cmd.first == "USER")
 		if (_users[id]->getNick() == "")
 			return _disconnectUser(pfd, 2);
-	}
 	else
 		return _disconnectUser(pfd, 2);
 	return 0;
