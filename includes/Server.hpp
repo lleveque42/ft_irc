@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
+/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/19 18:04:38 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/20 18:59:21 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@
 
 class Server;
 
-typedef int (Server::*cmds)(pollfd, std::string);
+typedef int (Server::*cmds)(User*, std::string);
 
 class Server
 {
@@ -77,15 +77,15 @@ class Server
 		int		_manageCmd(pollfd pfd, std::pair<std::string, std::string> cmd);
 		int		_sendAll(int fd, const char *buf, size_t len, int flags);
 		size_t	_recvAll(pollfd pfd);
-		int		_sendError(pollfd pfd, std::string msg);
-		int		_sendExecuted(pollfd pfd, std::string ret);
-		int		_disconnectUser(pollfd pfd, int ret);
-		int		_accecptConnection(int id, pollfd pfd, std::pair<std::string, std::string> cmd);
+		int		_sendError(User *user, std::string msg);
+		int		_sendExecuted(User *user, std::string ret);
+		int		_disconnectUser(User *user, int ret);
+		int		_acceptConnection(User *user, std::pair<std::string, std::string> cmd);
 		bool	_validChars(std::string s);
 		bool	_nickAlreadyUsed(User *current, std::string s);
-		int		_pass(pollfd pfd, std::string args);
-		int		_user(pollfd pfd, std::string args);
-		int		_nick(pollfd pfd, std::string buff);
-		int		_pong(pollfd pfd, std::string buff);
+		int		_pass(User *user, std::string args);
+		int		_user(User *user, std::string args);
+		int		_nick(User *user, std::string buff);
+		int		_pong(User *user, std::string buff);
 
 };

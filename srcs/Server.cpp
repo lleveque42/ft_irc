@@ -111,32 +111,32 @@ void Server::_acceptUser() {
 	_fd_count++;
 }
 
-int Server::_disconnectUser(pollfd pfd, int ret) {
+int Server::_disconnectUser(User *user, int ret) {
 	std::string disconnection(" has been disconnected!");
 	std::string delimiter("================================");
 
-	if (!_users[pfd.fd]->getCap())
-		_sendError(pfd, ":400  \033[91mConnection refused: No cap provided\033[00m\r\n");
-	else if (_users[pfd.fd]->getTriedToAuth() && _users[pfd.fd]->getNick() == "")
-		_sendError(pfd, ":431  \033[91mConnection refused: No nickname provided\033[00m\r\n");
-	else if (_users[pfd.fd]->getTriedToAuth() && _users[pfd.fd]->getUserName() == "")
-		_sendError(pfd, ":468  \033[91mConnection refused: No user informations provided\033[00m\r\n");
-	else if (_users[pfd.fd]->getAuth()) {
+	if (!user->getCap())
+		_sendError(user, ":400  \033[91mConnection refused: No cap provided\033[00m\r\n");
+	else if (user->getTriedToAuth() && user->getNick() == "")
+		_sendError(user, ":431  \033[91mConnection refused: No nickname provided\033[00m\r\n");
+	else if (user->getTriedToAuth() && user->getUserName() == "")
+		_sendError(user, ":468  \033[91mConnection refused: No user informations provided\033[00m\r\n");
+	else if (user->getAuth()) {
 		disconnection = " has left the server!";
 		delimiter = "==============================";
 	}
-	else if (!_users[pfd.fd]->getTriedToAuth())
-		_sendError(pfd, ":461 \033[91mConnection refused: No password provided\033[00m\r\n");
+	else if (!user->getTriedToAuth())
+		_sendError(user, ":461 \033[91mConnection refused: No password provided\033[00m\r\n");
 	std::cout << ORANGE BOLD "=========" RED << delimiter << RESET << std::endl;
-	std::cout << ORANGE BOLD "[ircserv]" RED " Client " << pfd.fd << disconnection << std::endl;
+	std::cout << ORANGE BOLD "[ircserv]" RED " Client " << user->getUserSd() << disconnection << std::endl;
 	std::cout << ORANGE BOLD "=========" RED << delimiter << RESET << std::endl;
-	close(pfd.fd);
-	delete _users[pfd.fd];
+	close(user->getUserSd());
+	delete user;
 	std::vector<pollfd>::iterator it;
-	for (it = _pfds.begin() + 1; it->fd != pfd.fd; it++)
+	for (it = _pfds.begin() + 1; it->fd != user->getUserSd(); it++)
 		;
 	_pfds.erase(it);
-	_users.erase(pfd.fd);
+	_users.erase(user->getUserSd());
 	_recvs.clear();
 	_fd_count--;
 	return ret;
@@ -180,7 +180,7 @@ size_t Server::_recvAll(pollfd pfd) {
 		if ((size = recv(pfd.fd, buffer, BUFFER_SIZE, 0)) == -1)
 			return -1;
 		if (size == 0)
-			return _disconnectUser(pfd, 0);
+			return _disconnectUser(_users[pfd.fd], 0);
 		buffer[size] = 0;
 		_buff += buffer;
 		if (_buff.find('\n') != _buff.npos)
@@ -206,7 +206,7 @@ int Server::_manageRequest(pollfd pfd) {
 				break;
 			else if (status == 3) {
 				std::string err( ":421 \033[91m" + _recvs[i].first + ": Unknown command\033[00m\r\n");
-				_sendError(pfd, err);
+				_sendError(_users[pfd.fd], err);
 			}
 		}
 	}
@@ -217,14 +217,14 @@ int Server::_manageCmd(pollfd pfd, std::pair<std::string, std::string> cmd) {
 	int ret;
 
 	if (_users[pfd.fd]->getFirstTry())
-		if ((ret = _accecptConnection(pfd.fd, pfd, cmd)))
+		if ((ret = _acceptConnection(_users[pfd.fd], cmd)))
 			return ret;
 	if (cmd.first == "CAP")
 		return 0;
 	// if (!_users[pfd.fd]->getCap())
 	// 	return 0;
 	if (_cmds.find(cmd.first) != _cmds.end())
-		return (this->*_cmds[cmd.first])(pfd, cmd.second);
+		return (this->*_cmds[cmd.first])(_users[pfd.fd], cmd.second);
 	return 3;
 }
 
@@ -245,100 +245,100 @@ int Server::_sendAll(int fd, const char *buf, size_t len, int flags) {
 
 /////////////////  COMMANDS  ////////////////////
 
-int	Server::_pass(pollfd pfd, std::string args) {
-	_users[pfd.fd]->setTriedToAuth(true);
-	if (_users[pfd.fd]->getAuth())
+int	Server::_pass(User *user, std::string args) {
+	user->setTriedToAuth(true);
+	if (user->getAuth())
 		return 0; //voir quoi faire quand deja authentifié
 	if (args != _password) {
 		std::string err(":464 \033[91mConnection refused: Password incorrect\033[00m\r\n");
-		_sendAll(pfd.fd, err.c_str(), err.length(), 0);
-		std::cout << RED BOLD "[ircserv]" RESET RED " Send    -->    " RED BOLD "[Client " << pfd.fd << "]" RESET RED ":    Connection refused: Password incorrect" << RESET << std::endl;
-			return _disconnectUser(pfd, 2);
+		_sendAll(user->getUserSd(), err.c_str(), err.length(), 0);
+		std::cout << RED BOLD "[ircserv]" RESET RED " Send    -->    " RED BOLD "[Client " << user->getUserSd() << "]" RESET RED ":    Connection refused: Password incorrect" << RESET << std::endl;
+			return _disconnectUser(user, 2);
 	}
-	if (!_users[pfd.fd]->getAuth()) {
-		_users[pfd.fd]->setAuth(true);
+	if (!user->getAuth()) {
+		user->setAuth(true);
 		std::string ok("\033[92mConnection accepted !\n\033[093mWelcome to our IRC server !\033[00m\r\n");
-		_sendAll(pfd.fd, ok.c_str(), ok.length(), 0);
-		std::cout << GREEN BOLD "[ircserv]" RESET GREEN " Send    -->    " GREEN BOLD "[Client " << pfd.fd << "]" RESET GREEN ":    Connection accepted: Password correct" << RESET << std::endl;
+		_sendAll(user->getUserSd(), ok.c_str(), ok.length(), 0);
+		std::cout << GREEN BOLD "[ircserv]" RESET GREEN " Send    -->    " GREEN BOLD "[Client " << user->getUserSd() << "]" RESET GREEN ":    Connection accepted: Password correct" << RESET << std::endl;
 	}
 	return 0;
 }
 
-int	Server::_user(pollfd pfd, std::string args) {
+int	Server::_user(User *user, std::string args) {
 	std::vector<std::string> argsVec;
 	std::string::iterator begin;
 	std::string::iterator end;
 	size_t end_pos;
 
-	if (!_users[pfd.fd]->getFirstTry())
-		return _sendError(pfd, ":462 \033[91mUser: You may not reregister\033[00m\r\n");
+	if (!user->getFirstTry())
+		return _sendError(user, ":462 \033[91mUser: You may not reregister\033[00m\r\n");
 	for (int i = 0; i < 4; i++) {
 		begin = args.begin();
 		if (i < 3) {
 			end_pos = args.find(' ');
 			end = begin + end_pos;
 			if (end_pos == args.npos)
-				return _sendError(pfd, ":461 \033[91mUser: Not enough parameters\033[00m\r\n");
+				return _sendError(user, ":461 \033[91mUser: Not enough parameters\033[00m\r\n");
 			argsVec.push_back(std::string(begin, end));
 			args.erase(begin, end + 1);
 		}
 		else {
 			if (*begin != ':')
-				return _sendError(pfd, ":461 \033[91mUser: No prefix \033[00m\r\n");
+				return _sendError(user, ":461 \033[91mUser: No prefix \033[00m\r\n");
 			begin++;
 			argsVec.push_back(std::string(begin, args.end()));
 			args.erase(begin, args.end());
 		}
 	}
-	_users[pfd.fd]->setUserName(argsVec[0]);
+	user->setUserName(argsVec[0]);
 	// _users[pfd.fd]->setMode(argsVec[1]);
-	_users[pfd.fd]->setHostName(argsVec[2]);
-	_users[pfd.fd]->setRealName(argsVec[3]);
-	std::string user_str = ":irc.server 001 " + _users[pfd.fd]->getNick() + " :\r\n";
-	_users[pfd.fd]->setFirstTry(false);
-	return _sendExecuted(pfd, user_str);
+	user->setHostName(argsVec[2]);
+	user->setRealName(argsVec[3]);
+	std::string user_str = ":irc.server 001 " + user->getNick() + " :\r\n";
+	user->setFirstTry(false);
+	return _sendExecuted(user, user_str);
 }
 
-int	Server::_nick(pollfd pfd, std::string buff) {
+int	Server::_nick(User *user, std::string buff) {
 	if (buff.empty())
-		return _sendError(pfd, ":431  \033[91mNick: No nickname provided\033[00m\r\n");
+		return _sendError(user, ":431  \033[91mNick: No nickname provided\033[00m\r\n");
 	else if (!_validChars(buff))
-		return _sendError(pfd, ":432  \033[91mNick: Erroneus nickname\033[00m\r\n");
-	else if (_nickAlreadyUsed(_users[pfd.fd], buff)) {
-		if (_users[pfd.fd]->getFirstTry()) {
-			_users[pfd.fd]->setNick(buff);
+		return _sendError(user, ":432  \033[91mNick: Erroneus nickname\033[00m\r\n");
+	else if (_nickAlreadyUsed(user, buff)) {
+		if (user->getFirstTry()) {
+			user->setNick(buff);
 			buff.insert(buff.end(), '_');
 		}
 		else
-			return _sendError(pfd, ":433  \033[91mNick: Nickname is already in use\033[00m\r\n");
+			return _sendError(user, ":433  \033[91mNick: Nickname is already in use\033[00m\r\n");
 	}
 	std::string old_nick;
-	if (_users[pfd.fd]->getNick().empty())
+	if (user->getNick().empty())
 		old_nick = buff;
 	else
-		old_nick = _users[pfd.fd]->getNick();
-	_users[pfd.fd]->setNick(buff);
-	std::string msg = ":" + old_nick + " NICK " + _users[pfd.fd]->getNick() + "\r\n";
-	return _sendExecuted(pfd, msg);
+		old_nick = user->getNick();
+	user->setNick(buff);
+	std::string msg = ":" + old_nick + " NICK " + user->getNick() + "\r\n";
+	return _sendExecuted(user, msg);
 }
 
-int Server::_pong(pollfd pfd, std::string buff) {
+int Server::_pong(User *user, std::string buff) {
 	(void)buff;
 	std::string msg = "PONG irc.server\r\n";
-	return _sendExecuted(pfd, msg);
+	return _sendExecuted(user, msg);
 }
 
 /////////////////  HELPERS  ////////////////////
 
-int Server::_sendError(pollfd pfd, std::string err) {
-	_sendAll(pfd.fd, err.c_str(), err.length(), 0);
-	std::cout << RED BOLD "[ircserv]" RESET RED " Send    -->    " RED BOLD "[Client " << pfd.fd << "]" RESET RED << ":    " << err << RESET;
+int Server::_sendError(User *user, std::string err) {
+	_sendAll(user->getUserSd(), err.c_str(), err.length(), 0);
+	std::cout << RED BOLD "[ircserv]" RESET RED " Send    -->    " RED BOLD "[Client " << user->getUserSd() << "]" RESET RED << ":    " << err << RESET;
 	return 1;
 }
 
-int Server::_sendExecuted(pollfd pfd, std::string ret) {
-	_sendAll(pfd.fd, ret.c_str(), ret.length(), 0);
-	std::cout << GREEN BOLD "[ircserv]" RESET GREEN " Send    -->    " GREEN BOLD "[Client " << pfd.fd << "]" RESET GREEN << ":    " << ret << RESET;
+int Server::_sendExecuted(User *user, std::string ret) {
+	_sendAll(user->getUserSd(), ret.c_str(), ret.length(), 0);
+	std::cout << GREEN BOLD "[ircserv]" RESET GREEN " Send    -->    " GREEN BOLD "[Client " << user->getUserSd() << "]" RESET GREEN << ":    " << ret << RESET;
 	return 0;
 }
 
@@ -356,19 +356,22 @@ bool	Server::_nickAlreadyUsed(User *current, std::string s) {
 	return false;
 }
 
-int Server::_accecptConnection(int id, pollfd pfd, std::pair<std::string, std::string> cmd) {
-	if (!_users[id]->getCap() && cmd.first == "CAP" && cmd.second == "LS")
-		return _users[id]->setCap(true), 0;
-	else if (!_users[id]->getTriedToAuth() && cmd.first == "PASS")
-		if (!_users[id]->getCap())
-			return _disconnectUser(pfd, 2);
-	else if (_users[id]->getNick() == "" && cmd.first == "NICK")
-		if (!_users[id]->getAuth())
-			return _disconnectUser(pfd, 2);
-	else if (cmd.first == "USER")
-		if (_users[id]->getNick() == "")
-			return _disconnectUser(pfd, 2);
+int Server::_acceptConnection(User *user, std::pair<std::string, std::string> cmd) {
+	if (!user->getCap() && cmd.first == "CAP" && cmd.second == "LS")
+		return user->setCap(true), 0;
+	else if (!user->getTriedToAuth() && cmd.first == "PASS") {
+		if (!user->getCap())
+			return _disconnectUser(user, 2);
+	}
+	else if (user->getNick() == "" && cmd.first == "NICK") {
+		if (!user->getAuth())
+			return _disconnectUser(user, 2);
+	}
+	else if (cmd.first == "USER") {
+		if (user->getNick() == "")
+			return _disconnectUser(user, 2);
+	}
 	else
-		return _disconnectUser(pfd, 2);
+		return _disconnectUser(user, 2);
 	return 0;
 }
