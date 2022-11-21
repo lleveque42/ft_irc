@@ -1,29 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Channel.hpp                                        :+:      :+:    :+:   */
+/*   join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/11/21 15:26:42 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/21 15:34:06 by arudy            ###   ########.fr       */
+/*   Created: 2022/11/21 15:35:57 by arudy             #+#    #+#             */
+/*   Updated: 2022/11/21 15:49:10 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#include "../../includes/Channel.hpp"
+#include "../../includes/Server.hpp"
+#include "../../includes/User.hpp"
 
-#include "../includes/Exception.hpp"
-#include "../includes/Server.hpp"
-#include "../includes/User.hpp"
-
-class Channel
-{
-	private:
-		std::string	_name;
-		std::vector<User *>	_users;
-
-	public:
-		Channel(std::string name);
-		~Channel();
-		std::string const	&getName() const;
-};
+int	Server::_join(User *user, std::string buff) {
+	(void)user;
+	(void)buff;
+	return 0;
+}

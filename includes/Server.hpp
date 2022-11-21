@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/20 18:59:21 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/21 15:35:48 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 #include <poll.h>
 #include <algorithm>
 #include "../includes/Exception.hpp"
+#include "../includes/Channel.hpp"
 #include "../includes/User.hpp"
 
 #define BUFFER_SIZE 4096
@@ -87,5 +88,7 @@ class Server
 		int		_user(User *user, std::string args);
 		int		_nick(User *user, std::string buff);
 		int		_pong(User *user, std::string buff);
+		int		_mode(User *user, std::string buff);
+		int		_join(User *user, std::string buff);
 
 };
