@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   helper.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
+/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 09:52:20 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/21 11:22:22 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/21 11:39:33 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/Server.hpp"
-#include "../includes/User.hpp"
+#include "../../includes/Server.hpp"
+#include "../../includes/User.hpp"
 
 int Server::_sendError(User *user, std::string err) {
 	_sendAll(user->getUserSd(), err.c_str(), err.length(), 0);

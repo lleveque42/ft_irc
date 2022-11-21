@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/Server.hpp"
+#include "../../includes/Server.hpp"
 
 Server::Server(char *port, char *password) : _password(password), _port(port), _pfds(), _fd_count(0) {
 	_initCmd();
