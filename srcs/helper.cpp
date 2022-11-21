@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 09:52:20 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/21 09:53:30 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/21 11:22:22 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int Server::_sendExecuted(User *user, std::string ret) {
 
 bool	Server::_validChars(std::string s) {
 	for(size_t i = 0; i < s.length(); i++)
-		if (s[i] < 33 && s[i] > 126)
+		if (s[i] < 33 || s[i] > 126)
 			return false;
 	return true;
 }

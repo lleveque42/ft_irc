@@ -111,7 +111,7 @@ int Server::_disconnectUser(User *user, int ret) {
 	if (!user->getCap())
 		_sendError(user, ":400  \033[91mConnection refused: No cap provided\033[00m\r\n");
 	else if (user->getTriedToAuth() && !user->getAuth())
-		; // To skip no nick provided msg whn no passwd, to change i think
+		_sendError(user, ":431  \033[91mConnection refused: Password incorrect\033[00m\r\n");
 	else if (user->getTriedToAuth() && user->getNick() == "")
 		_sendError(user, ":431  \033[91mConnection refused: No nickname provided\033[00m\r\n");
 	else if (user->getTriedToAuth() && user->getUserName() == "")

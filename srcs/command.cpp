@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 09:32:47 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/21 10:43:33 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/21 11:28:46 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,8 @@ int Server::_manageCmd(pollfd pfd, std::pair<std::string, std::string> cmd) {
 	if (_users[pfd.fd]->getFirstTry())
 		if ((ret = _acceptConnection(_users[pfd.fd], cmd)))
 			return ret;
-	if (!_users[pfd.fd]->getCap())
-		return 0;
 	if (cmd.first == "CAP")
-	{
-		std::cout << "CAAAAAP\n";
 		return 0;
-	}
 	if (_cmds.find(cmd.first) != _cmds.end())
 		return (this->*_cmds[cmd.first])(_users[pfd.fd], cmd.second);
 	return 3;
@@ -42,12 +37,8 @@ int	Server::_pass(User *user, std::string args) {
 	user->setTriedToAuth(true);
 	if (user->getAuth())
 		return 0; //voir quoi faire quand deja authentifié
-	if (args != _password) {
-		std::string err(":464 \033[91mConnection refused: Password incorrect\033[00m\r\n");
-		_sendAll(user->getUserSd(), err.c_str(), err.length(), 0);
-		std::cout << RED BOLD "[ircserv]" RESET RED " Send    -->    " RED BOLD "[Client " << user->getUserSd() << "]" RESET RED ":    Connection refused: Password incorrect" << RESET << std::endl;
+	if (args != _password)
 		return _disconnectUser(user, 2);
-	}
 	if (!user->getAuth()) {
 		user->setAuth(true);
 		std::string ok("\033[92mConnection accepted !\n\033[093mWelcome to our IRC server !\033[00m\r\n");
