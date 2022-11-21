@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   command.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
+/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 09:32:47 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/21 15:37:38 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/21 20:01:57 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ void Server::_initCmd() {
 	_cmds["USER"] = &Server::_user;
 	_cmds["NICK"] = &Server::_nick;
 	_cmds["PING"] = &Server::_pong;
+	_cmds["QUIT"] = &Server::_quit;
 	_cmds["MODE"] = &Server::_mode;
 	_cmds["JOIN"] = &Server::_join;
 }

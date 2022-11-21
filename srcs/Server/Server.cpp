@@ -12,7 +12,8 @@
 
 #include "../../includes/Server.hpp"
 
-Server::Server(char *port, char *password) : _password(password), _port(port), _pfds(), _fd_count(0) {
+Server::Server(char *port, char *password) : _creation_time(currentTime()),
+ _password(password), _port(port), _pfds(), _fd_count(0) {
 	_initCmd();
 }
 
@@ -66,12 +67,12 @@ void Server::setup()
 	_pfds.back().fd = _sd;
 	_pfds.back().events = POLLIN;
 	_fd_count = 1;
-	std::cout << ORANGE BOLD "[ircserv]" GREEN " setted up on port " << _port << " \033[32m\xE2\x9C\x93\033[0m" << RESET << std::endl;
+	std::cout << DIS_SERVSETTEDUP << _port << DIS_EMOJICHECK << std::endl;
 }
 
 void Server::launch() {
 	if (_fd_count == 1)
-		std::cout << ORANGE BOLD "[ircserv]" RESET BOLD " waiting for incoming connections... 😴" << RESET << std::endl;
+		std::cout << DIS_WAITCONNEC << std::endl;
 	if (poll(&_pfds[0], _fd_count, -1) == -1) {
 		if (errno != EINTR)
 			throw Exception::poll();
@@ -92,9 +93,7 @@ void Server::_acceptUser() {
 	sockaddr_storage new_addr; // ou toutes les infos de la nouvelle connexion vont aller
 	socklen_t new_addr_size; // sizeof sockaddr_storage
 
-	std::cout << ORANGE BOLD "=========" GREEN "=========================" << RESET << std::endl;
-	std::cout << ORANGE BOLD "[ircserv]" GREEN " new incoming connection!" << RESET << std::endl;
-	std::cout << ORANGE BOLD "=========" GREEN "=========================" << RESET << std::endl;
+	std::cout << DIS_CONNECTED << std::endl;
 	new_addr_size = sizeof new_addr;
 	new_sd = accept(_sd, (sockaddr *)&new_addr, &new_addr_size); // accepte les connections entrantes, le nouveau fd sera pour recevoir et envoyer des appels
 	_users.insert(std::pair<int, User*>(new_sd, new User(new_sd))); // pair first garder user_id ? Ou mettre le sd
@@ -109,19 +108,19 @@ int Server::_disconnectUser(User *user, int ret) {
 	std::string delimiter("================================");
 
 	if (!user->getCap())
-		_sendError(user, ":400  \033[91mConnection refused: No cap provided\033[00m\r\n");
+		_sendError(user, ERR_NOCAP);
 	else if (user->getTriedToAuth() && !user->getAuth())
-		_sendError(user, ":431  \033[91mConnection refused: Password incorrect\033[00m\r\n");
+		_sendError(user, ERR_PASSWDMISMATCH);
 	else if (user->getTriedToAuth() && user->getNick() == "")
-		_sendError(user, ":431  \033[91mConnection refused: No nickname provided\033[00m\r\n");
+		_sendError(user, ERR_NONICK);
 	else if (user->getTriedToAuth() && user->getUserName() == "")
-		_sendError(user, ":468  \033[91mConnection refused: No user informations provided\033[00m\r\n");
+		_sendError(user, ERR_NOUSER);
 	else if (user->getAuth()) {
 		disconnection = " has left the server!";
 		delimiter = "==============================";
 	}
 	else if (!user->getTriedToAuth())
-		_sendError(user, ":461 \033[91mConnection refused: No password provided\033[00m\r\n");
+		_sendError(user, ERR_NOPASS);
 	std::cout << ORANGE BOLD "=========" RED << delimiter << RESET << std::endl;
 	std::cout << ORANGE BOLD "[ircserv]" RED " Client " << user->getUserSd() << disconnection << std::endl;
 	std::cout << ORANGE BOLD "=========" RED << delimiter << RESET << std::endl;
@@ -150,14 +149,12 @@ int Server::_manageRequest(pollfd pfd) {
 	lines = _fillRecvs(std::string(_buff));
 	_buff.clear();
 	for (int i = 0; i < lines; i++) {
-		std::cout << BLUE BOLD "[ircserv]" RESET BLUE " Recv    <--    " BLUE BOLD "[Client " << pfd.fd << "]" RESET BLUE ":    " << _recvs[i].first << " " << _recvs[i].second << RESET << std::endl;
+		std::cout << DIS_RECV << pfd.fd << DIS_RECVEND(_recvs[i].first, _recvs[i].second) << std::endl;
 		if ((status = _manageCmd(pfd, _recvs[i]))) {
 			if (status == 2)
 				break;
-			else if (status == 3) {
-				std::string err( ":421 \033[91m" + _recvs[i].first + ": Unknown command\033[00m\r\n");
-				_sendError(_users[pfd.fd], err);
-			}
+			else if (status == 3)
+				_sendError(_users[pfd.fd], ERR_UNKNOWNCOMMAND(_recvs[i].first));
 		}
 	}
 	return 0;
