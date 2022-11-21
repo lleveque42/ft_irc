@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/21 15:35:48 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/21 19:08:12 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <sstream>
 #include <netdb.h>
 #include <csignal>
 #include <fcntl.h>
@@ -46,6 +47,7 @@
 #define STAR "\033[92m * \033[0m"
 
 class Server;
+class Channel;
 
 typedef int (Server::*cmds)(User*, std::string);
 
@@ -60,6 +62,7 @@ class Server
 		int						_fd_count;
 		std::string				_buff;
 		std::vector<std::pair<std::string, std::string> > _recvs;
+		std::map<const std::string, Channel *> _chans;
 		std::map<const std::string, cmds> _cmds;
 
 
