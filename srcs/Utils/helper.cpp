@@ -6,22 +6,39 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 09:52:20 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/21 11:39:33 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/21 19:36:27 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/Server.hpp"
 #include "../../includes/User.hpp"
 
+int Server::_registrationCompleted(User *user) {
+	_sendExecuted(user, RPL_WELCOME(user->getNick()));
+	_sendExecuted(user, RPL_YOURHOST(user->getNick()));
+	_sendExecuted(user, RPL_CREATED(user->getNick(), _creation_time));
+	_sendExecuted(user, RPL_MYINFO(user->getNick()));
+	return 0;
+}
+
+std::string currentTime() {
+	time_t t = std::time(0);
+	struct tm *now = std::localtime(&t);
+	std::string time(asctime(now));
+	time.erase(time.end() - 1);
+	std::cout << DIS_CREATED(time)  << std::endl;
+	return time;
+}
+
 int Server::_sendError(User *user, std::string err) {
 	_sendAll(user->getUserSd(), err.c_str(), err.length(), 0);
-	std::cout << RED BOLD "[ircserv]" RESET RED " Send    -->    " RED BOLD "[Client " << user->getUserSd() << "]" RESET RED << ":    " << err << RESET;
+	std::cout << DIS_ERR << user->getUserSd() << DIS_ERREND(err);
 	return 1;
 }
 
 int Server::_sendExecuted(User *user, std::string ret) {
 	_sendAll(user->getUserSd(), ret.c_str(), ret.length(), 0);
-	std::cout << GREEN BOLD "[ircserv]" RESET GREEN " Send    -->    " GREEN BOLD "[Client " << user->getUserSd() << "]" RESET GREEN << ":    " << ret << RESET;
+	std::cout << DIS_EXEC << user->getUserSd() << DIS_EXECEND(ret);
 	return 0;
 }
 

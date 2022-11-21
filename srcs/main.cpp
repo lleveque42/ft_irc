@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 08:43:59 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/19 16:15:28 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/21 15:58:59 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,7 @@ bool	check_input(int ac, char **av)
 	return 1;
 }
 
-int	main(int ac, char **av)
-{
+int	main(int ac, char **av) {
 	if (!check_input(ac, av))
 		return 1;
 	Server *server = new Server(av[1], av[2]);

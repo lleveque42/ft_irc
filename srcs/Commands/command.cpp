@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 09:32:47 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/21 11:44:44 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/21 12:39:28 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ void Server::_initCmd() {
 	_cmds["USER"] = &Server::_user;
 	_cmds["NICK"] = &Server::_nick;
 	_cmds["PING"] = &Server::_pong;
+	_cmds["QUIT"] = &Server::_quit;
 }
 
 int Server::_manageCmd(pollfd pfd, std::pair<std::string, std::string> cmd) {

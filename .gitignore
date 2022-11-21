@@ -1,3 +1,8 @@
 .vscode
-srcs/*.o
+objects/*.o
+objects/Commands/*.o
+objects/Server/*.o
+objects/Channel/*.o
+objects/User/*.o
+objects/Utils/*.o
 ircserv
