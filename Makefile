@@ -6,13 +6,13 @@
 #    By: arudy <arudy@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/16 08:42:57 by arudy             #+#    #+#              #
-#    Updated: 2022/11/18 10:41:36 by arudy            ###   ########.fr        #
+#    Updated: 2022/11/21 09:55:04 by arudy            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	= ircserv
 
-SRCS	= $(addprefix srcs/, main.cpp Server.cpp User.cpp)
+SRCS	= $(addprefix srcs/, main.cpp Server.cpp User.cpp command.cpp helper.cpp)
 
 OBJS	= $(SRCS:.cpp=.o)
 # DEPS	= $(SRCS:.cpp=.d)
