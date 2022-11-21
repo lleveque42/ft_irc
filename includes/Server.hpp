@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/21 20:42:20 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/21 22:49:57 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@
 #define RPL_PASSSEND "Connection accepted: Password correct"
 #define RPL_NICK(old_nick, nickname) (":" + std::string(old_nick) + " NICK " + std::string(nickname) + "\r\n")
 #define RPL_QUIT(nickname, hostname, reason) (":" + std::string(nickname) + "@" + std::string(hostname) + " QUIT :" + std::string(reason) + "\r\n")
+#define RPL_NAMEREPLY(nickname, hostname, chan_name, username) (":353 " + std::string(nickname) + " " + std::string(hostname) + " = " + std::string(chan_name) + " :" + username + "\r\n")
 
 #define ERR_NOCAP ":400 \033[91mConnection refused: No cap provided\033[00m\r\n"
 #define ERR_NOPASS ":400 \033[91mConnection refused: No password provided\r\n"
@@ -97,7 +98,7 @@ class Server
 		int						_fd_count;
 		std::string				_buff;
 		std::vector<std::pair<std::string, std::string> > _recvs;
-		std::map<const std::string, Channel *> _chans;
+		std::map<std::string, Channel *> _chans;
 		std::map<const std::string, cmds> _cmds;
 
 
@@ -130,7 +131,6 @@ class Server
 		int		_quit(User *user, std::string args);
 		int		_mode(User *user, std::string buff);
 		int		_join(User *user, std::string buff);
-
 };
 
 std::string currentTime();

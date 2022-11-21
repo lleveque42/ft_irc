@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+         #
+#    By: arudy <arudy@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/16 08:42:57 by arudy             #+#    #+#              #
-#    Updated: 2022/11/21 20:01:34 by lleveque         ###   ########.fr        #
+#    Updated: 2022/11/21 22:44:57 by arudy            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,9 +16,9 @@ DIR_SRCS = srcs
 
 DIR_OBJS = objects
 
-SRCS	= main.cpp Server/Server.cpp User/User.cpp Utils/helper.cpp \
+SRCS	= main.cpp Server/Server.cpp User/User.cpp Utils/helper.cpp Channel/Channel.cpp\
 		  $(addprefix Commands/, nick.cpp pass.cpp pong.cpp user.cpp \
-		  quit.cpp command.cpp )
+		  quit.cpp command.cpp mode.cpp join.cpp )
 
 OBJS	= $(SRCS:%.cpp=$(DIR_OBJS)/%.o)
 

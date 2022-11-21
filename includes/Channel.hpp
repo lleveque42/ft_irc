@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 15:26:42 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/21 15:34:06 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/21 22:43:18 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,11 @@ class Channel
 	private:
 		std::string	_name;
 		std::vector<User *>	_users;
+		std::map<int, User *>	_opers; // keep map ?
 
 	public:
 		Channel(std::string name);
 		~Channel();
 		std::string const	&getName() const;
+		void				addUser(User *user);
 };
