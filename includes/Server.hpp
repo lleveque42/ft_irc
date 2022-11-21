@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/21 19:36:32 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/21 20:02:15 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 #include <poll.h>
 #include <algorithm>
 #include "../includes/Exception.hpp"
+#include "../includes/Channel.hpp"
 #include "../includes/User.hpp"
 
 #define BUFFER_SIZE 4096
@@ -124,6 +125,9 @@ class Server
 		int		_nick(User *user, std::string buff);
 		int		_pong(User *user, std::string buff);
 		int		_quit(User *user, std::string args);
+		int		_mode(User *user, std::string buff);
+		int		_join(User *user, std::string buff);
+
 };
 
 std::string currentTime();
