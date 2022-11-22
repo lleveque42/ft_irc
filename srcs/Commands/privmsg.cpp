@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 16:17:10 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/22 18:09:08 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/22 18:14:13 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int		Server::_privmsg(User *user, std::string buff) {
 	{
 		Channel *chan = _channels.find(recip.first)->second;
 		if (!chan)
-			return _sendError(user, ERR_CANNOTSENDTOCHAN(user->getNick(), recip.first));
+			return _sendError(user, ERR_CANNOTSENDTOCHAN(user->getClient(), recip.first));
 		
 	}
 
