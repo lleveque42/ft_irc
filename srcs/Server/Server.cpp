@@ -34,8 +34,7 @@ Server::~Server() {
 
 //////////////// INIT ///////////////////
 
-void Server::setup()
-{
+void Server::setup() {
 	struct addrinfo hints;
 	struct addrinfo *servinfo = NULL;
 	struct addrinfo *tmp = NULL;
@@ -67,6 +66,7 @@ void Server::setup()
 	_pfds.back().fd = _sd;
 	_pfds.back().events = POLLIN;
 	_fd_count = 1;
+	std::cout << DIS_CREATED(_creation_time)  << std::endl;
 	std::cout << DIS_SERVSETTEDUP << _port << DIS_EMOJICHECK << std::endl;
 }
 

@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 09:52:20 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/21 19:36:27 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/22 18:21:19 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ std::string currentTime() {
 	struct tm *now = std::localtime(&t);
 	std::string time(asctime(now));
 	time.erase(time.end() - 1);
-	std::cout << DIS_CREATED(time)  << std::endl;
 	return time;
 }
 
