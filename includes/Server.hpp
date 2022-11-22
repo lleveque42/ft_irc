@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/21 22:49:57 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/22 10:19:06 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@
 #define RPL_NICK(old_nick, nickname) (":" + std::string(old_nick) + " NICK " + std::string(nickname) + "\r\n")
 #define RPL_QUIT(nickname, hostname, reason) (":" + std::string(nickname) + "@" + std::string(hostname) + " QUIT :" + std::string(reason) + "\r\n")
 #define RPL_NAMEREPLY(nickname, hostname, chan_name, username) (":353 " + std::string(nickname) + " " + std::string(hostname) + " = " + std::string(chan_name) + " :" + username + "\r\n")
+#define RPL_ENDOFNAMES(nickname, hostname, chan_name) (":366 " + std::string(nickname) + " " + std::string(hostname) + " " + std::string(chan_name) + " :End of NAMES list\r\n")
 
 #define ERR_NOCAP ":400 \033[91mConnection refused: No cap provided\033[00m\r\n"
 #define ERR_NOPASS ":400 \033[91mConnection refused: No password provided\r\n"
@@ -124,6 +125,7 @@ class Server
 		int		_registrationCompleted(User *user);
 		bool	_validChars(std::string s);
 		bool	_nickAlreadyUsed(User *current, std::string s);
+		void	_sendJoinMsg(User *user, Channel *chan);
 		int		_pass(User *user, std::string args);
 		int		_user(User *user, std::string args);
 		int		_nick(User *user, std::string buff);

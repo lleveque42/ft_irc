@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 15:26:42 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/21 22:43:18 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/22 10:47:18 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,4 +28,5 @@ class Channel
 		~Channel();
 		std::string const	&getName() const;
 		void				addUser(User *user);
+		std::string			getUsersList();
 };
