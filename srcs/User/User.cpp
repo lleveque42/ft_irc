@@ -23,6 +23,12 @@ int const &User::getUserSd() const {
 	return _user_sd;
 }
 
+std::string const User::getClient() const {
+	if (getFirstTry())
+		return "";
+	return (getNick() + "!" + getUserName() + "@" + getHostName());
+}
+
 std::string const &User::getNick() const {
 	return _nick;
 }

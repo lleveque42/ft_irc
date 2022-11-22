@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 15:35:57 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/22 16:21:57 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/22 18:15:42 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,18 +39,18 @@ static std::vector<std::pair<std::string, std::string> > strtovec(std::string bu
 }
 
 void Server::_sendJoinMsg(User *user, Channel *chan) {
-	_sendExecuted(user, RPL_JOIN(user->getNick(), chan->getName()));
 	if (chan->getTopic().first)
-		_sendExecuted(user, RPL_TOPIC(user->getNick(), chan->getTopic().second));
-	_sendExecuted(user, RPL_NAMEREPLY(user->getNick(), chan->getName(), chan->getUsersList()));
-	_sendExecuted(user, RPL_ENDOFNAMES(user->getNick(), chan->getName()));
+		_sendExecuted(user, RPL_TOPIC(user->getClient(), chan->getName(), chan->getTopic().second));
+	_sendExecuted(user, RPL_NAMEREPLY(user->getClient(), user->getNick(), chan->getName(), chan->getUsersList()));
+	_sendExecuted(user, RPL_ENDOFNAMES(user->getClient(), user->getNick(), chan->getName()));
+	_sendExecuted(user, RPL_JOIN(user->getClient(), chan->getName()));
 }
 
 int Server::_checkModes(User *user, Channel *new_chan, std::string key) {
 	if (new_chan->getKey().first && new_chan->getKey().second != key)
-		return _sendError(user, ERR_BADCHANNELKEY(new_chan->getName()));
+		return _sendError(user, ERR_BADCHANNELKEY(user->getClient(), new_chan->getName()));
 	if (new_chan->getLimited().first && new_chan->getLimited().second == new_chan->getUsers().size())
-		return _sendError(user, ERR_CHANNELISFULL(new_chan->getName()));
+		return _sendError(user, ERR_CHANNELISFULL(user->getClient(), new_chan->getName()));
 	return 0;
 }
 

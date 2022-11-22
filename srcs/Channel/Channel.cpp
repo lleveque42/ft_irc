@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 15:25:06 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/22 16:21:45 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/22 18:15:34 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,12 +37,9 @@ std::string	Channel::getUsersList() {
 	std::string list;
 	std::map<std::string, User *>::iterator it = _users.begin();
 
-	if (isOp(it->second))
-		list += "@";
-	list += it->second->getNick();
-	it++;
 	for (; it != _users.end(); it++) {
-		list += " ";
+		if (it != _users.begin())
+			list += " ";
 		if (isOp(it->second))
 			list += "@";
 		list += it->second->getNick();
