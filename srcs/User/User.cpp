@@ -13,12 +13,10 @@
 #include "../../includes/User.hpp"
 
 User::User(int sd) : _user_sd(sd), _auth(0), _tried_to_auth(0), _first_try(true),
-_cap(false), _nick(), _user_name(), _real_name(), _host_name()
-{
+_cap(false), _nick(), _user_name(), _real_name(), _host_name() {
 }
 
-User::~User()
-{
+User::~User() {
 }
 
 int const &User::getUserSd() const {
@@ -57,6 +55,10 @@ bool const &User::getCap() const {
 	return _cap;
 }
 
+bool User::isOp(Channel *channel) {
+	return _ops.count(channel->getName());
+}
+
 void User::setNick(std::string value) {
 	_nick = std::string(value);
 }
@@ -88,3 +90,30 @@ void User::setFirstTry(bool value) {
 void User::setCap(bool value) {
 	_cap = value;
 }
+
+void User::addChannel(Channel *channel) {
+	_joined.insert(std::make_pair(channel->getName(), channel));
+}
+
+void User::addOps(Channel *channel) {
+	_ops.insert(std::make_pair(channel->getName(), channel));
+}
+
+void User::removeChannel(Channel *channel) {
+	_joined.erase(channel->getName());
+}
+
+void User::removeOps(Channel *channel) {
+	_ops.erase(channel->getName());
+}
+
+void User::removeFromAll() {
+	std::map<std::string, Channel *>::iterator ite = _joined.end();
+
+	for (std::map<std::string, Channel *>::iterator it = _joined.begin(); it != ite; it++) {
+		if (isOp(it->second))
+			it->second->removeFromOp(this);
+		it->second->removeUser(this);
+	}
+}
+

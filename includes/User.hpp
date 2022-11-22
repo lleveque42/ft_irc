@@ -11,7 +11,8 @@
 /* ************************************************************************** */
 
 #pragma once
-#include <iostream>
+
+#include "Server.hpp"
 
 class Channel;
 
@@ -43,6 +44,7 @@ class User {
 		bool const			&getTriedToAuth() const;
 		bool const			&getFirstTry() const;
 		bool const			&getCap() const;
+		bool				isOp(Channel *channel);
 		void				setNick(std::string value);
 		void				setUserName(std::string value);
 		void				setHostName(std::string value);
@@ -51,4 +53,9 @@ class User {
 		void				setTriedToAuth(bool value);
 		void				setFirstTry(bool value);
 		void				setCap(bool value);
+		void				addChannel(Channel *channel);
+		void				addOps(Channel *channel);
+		void				removeChannel(Channel *channel);
+		void				removeOps(Channel *channel);
+		void				removeFromAll();
 };

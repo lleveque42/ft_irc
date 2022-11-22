@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 15:25:06 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/22 15:44:29 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/22 15:55:19 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,12 @@ std::string const &Channel::getName() const {
 
 void Channel::addUser(User *user) {
 	_users.insert(std::make_pair(user->getNick(), user));
-	// user.addChannel();
+	user->addChannel(this);
 }
 
 void Channel::removeUser(User *user) {
 	_users.erase(user->getNick());
+	user->removeChannel(this);
 }
 
 std::string	Channel::getUsersList() {
@@ -71,11 +72,12 @@ std::pair<bool, std::string> Channel::getTopic() const {
 
 void Channel::addToOp(User *user) {
 	_opers.insert(std::make_pair(user->getNick(), user));
-	// user.addOps();
+	user->addOps(this);
 }
 
 void Channel::removeFromOp(User *user) {
-
+	_opers.erase(user->getNick());
+	user->removeOps(this);
 }
 
 void Channel::setLimited(bool value, size_t n) {

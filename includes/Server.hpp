@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/22 15:40:05 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/22 16:11:48 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,7 @@
 
 class Server;
 class Channel;
+class User;
 
 typedef int (Server::*cmds)(User*, std::string);
 

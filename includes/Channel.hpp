@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 15:26:42 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/22 15:26:22 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/22 16:12:05 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 #include "../includes/Exception.hpp"
 #include "../includes/Server.hpp"
 #include "../includes/User.hpp"
+
+class User;
 
 class Channel {
 	private:
