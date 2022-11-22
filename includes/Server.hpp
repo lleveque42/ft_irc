@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
+/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/22 17:58:43 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/22 18:15:08 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@
 #define ERR_NOPASS ":irc.server 400 " RED "Connection refused: No password provided\r\n"
 #define ERR_NONICK ":irc.server 400 " RED "Connection refused: No nickname provided, registration not completed" RESET "\r\n"
 #define ERR_NOUSER ":irc.server 400 " RED "Connection refused: No user informations provided, registration not completed" RESET "\r\n"
+#define ERR_CANNOTSENDTOCHAN(client, chan_name) (":" + std::string(client) + " 404 " RED + std::string(chan_name) + " :Cannot send to channel\r\n" RESET)
 #define ERR_UNKNOWNCOMMAND(client, cmd) (":" + std::string(client) +" 421 " RED + std::string(cmd) + ": Unknown command" RESET "\r\n")
 #define ERR_NONICKNAMEGIVEN(client) ":" + std::string(client) +" 431 " RED "NICK: No nickname provided" RESET "\r\n"
 #define ERR_ERRONEUSNICKNAME(client) ":" + std::string(client) +" 432 " RED "NICK: Erroneus nickname" RESET "\r\n"
@@ -139,6 +140,7 @@ class Server
 		int		_quit(User *user, std::string args);
 		int		_mode(User *user, std::string buff);
 		int		_join(User *user, std::string buff);
+		int		_privmsg(User *user, std::string buff);
 };
 
 std::string currentTime();
