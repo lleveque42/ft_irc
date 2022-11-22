@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/22 16:11:48 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/22 17:58:43 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,25 +54,25 @@
 #define RPL_PASSSEND "Connection accepted: Password correct"
 #define RPL_NICK(old_nick, nickname) (":" + std::string(old_nick) + " NICK " + std::string(nickname) + "\r\n")
 #define RPL_QUIT(nickname, hostname, reason) (":" + std::string(nickname) + " QUIT :" + std::string(reason) + "\r\n")
-#define RPL_JOIN(nickname, chan_name) (":" + std::string(nickname) + " JOIN " + std::string(chan_name) + "\r\n")
-#define RPL_TOPIC(chan_name, topic) (":irc.server 332 " + std::string(chan_name) + ": " + std::string(topic))
-#define RPL_NAMEREPLY(nickname, chan_name, usernames) (":irc.server 353 " + std::string(nickname) + " " + " = " + std::string(chan_name) + " :" + std::string(usernames) + "\r\n")
-#define RPL_ENDOFNAMES(nickname, chan_name) (":irc.server 366 " + std::string(nickname) + " " + std::string(chan_name) + " :End of NAMES list\r\n")
+#define RPL_JOIN(client, chan_name) (":" + std::string(client) + " JOIN :" + std::string(chan_name) + "\r\n")
+#define RPL_TOPIC(client, chan_name, topic) (":" + std::string(client) +" 332 " + std::string(chan_name) + ": " + std::string(topic) + "\r\n")
+#define RPL_NAMEREPLY(client, nickname, chan_name, usernames) (":" + std::string(client) +" 353 " + std::string(nickname) + " = " + std::string(chan_name) + " :" + std::string(usernames) + "\r\n")
+#define RPL_ENDOFNAMES(client, nickname, chan_name) (":" + std::string(client) +" 366 " + std::string(nickname) + " " + std::string(chan_name) + " :End of /NAMES list\r\n")
 
 #define ERR_NOCAP ":irc.server 400 " RED "Connection refused: No cap provided" RESET "\r\n"
 #define ERR_NOPASS ":irc.server 400 " RED "Connection refused: No password provided\r\n"
 #define ERR_NONICK ":irc.server 400 " RED "Connection refused: No nickname provided, registration not completed" RESET "\r\n"
 #define ERR_NOUSER ":irc.server 400 " RED "Connection refused: No user informations provided, registration not completed" RESET "\r\n"
-#define ERR_UNKNOWNCOMMAND(cmd) (":irc.server 421 " RED + std::string(cmd) + ": Unknown command" RESET "\r\n")
-#define ERR_NONICKNAMEGIVEN ":irc.server 431 " RED "NICK: No nickname provided" RESET "\r\n"
-#define ERR_ERRONEUSNICKNAME ":irc.server 432 " RED "NICK: Erroneus nickname" RESET "\r\n"
-#define ERR_NICKNAMEINUSE ":irc.server 433 " RED "NICK: Nickname is already in use" RESET "\r\n"
-#define ERR_NEEDMOREPARAMS(cmd) (":irc.server 461 " RED + std::string(cmd) + ": Not enough parameters" RESET "\r\n")
-#define ERR_NOPREFIX(cmd) (":irc.server 461 " RED + std::string(cmd) + ": No prefix before last param" RESET "\r\n")
-#define ERR_ALREADYREGISTERED(cmd) ":irc.server 462 " RED "USER: You may not reregister" RESET "\r\n"
-#define ERR_PASSWDMISMATCH ":irc.server 464 " RED "Connection refused: Password incorrect" RESET "\r\n"
-#define ERR_BADCHANNELKEY(chan_name) (":irc.server 465 " RED + std::string(chan_name) + ": Cannot join channel (+k)" RESET "\r\n")
-#define ERR_CHANNELISFULL(chan_name) (":irc.server 471 " + std::string(chan_name) + ": Cannot join channel (+l)" RESET "\r\n")
+#define ERR_UNKNOWNCOMMAND(client, cmd) (":" + std::string(client) +" 421 " RED + std::string(cmd) + ": Unknown command" RESET "\r\n")
+#define ERR_NONICKNAMEGIVEN(client) ":" + std::string(client) +" 431 " RED "NICK: No nickname provided" RESET "\r\n"
+#define ERR_ERRONEUSNICKNAME(client) ":" + std::string(client) +" 432 " RED "NICK: Erroneus nickname" RESET "\r\n"
+#define ERR_NICKNAMEINUSE(client) ":" + std::string(client) +" 433 " RED "NICK: Nickname is already in use" RESET "\r\n"
+#define ERR_NEEDMOREPARAMS(client, cmd) (":" + std::string(client) +" 461 " RED + std::string(cmd) + ": Not enough parameters" RESET "\r\n")
+#define ERR_NOPREFIX(client, cmd) (":" + std::string(client) +" 461 " RED + std::string(cmd) + ": No prefix before last param" RESET "\r\n")
+#define ERR_ALREADYREGISTERED(client, cmd) ":" + std::string(client) +" 462 " RED "USER: You may not reregister" RESET "\r\n"
+#define ERR_PASSWDMISMATCH(client) ":" + std::string(client) +" 464 " RED "Connection refused: Password incorrect" RESET "\r\n"
+#define ERR_BADCHANNELKEY(client, chan_name) (":" + std::string(client) +" 465 " RED + std::string(chan_name) + ": Cannot join channel (+k)" RESET "\r\n")
+#define ERR_CHANNELISFULL(client, chan_name) (":" + std::string(client) +" 471 " + std::string(chan_name) + ": Cannot join channel (+l)" RESET "\r\n")
 
 #define DIS_CREATED(date) (ORANGE BOLD "[ircserv]" RESET BOLD " created " + std::string(date) + RESET)
 #define DIS_WAITCONNEC ORANGE BOLD "[ircserv]" RESET BOLD " waiting for incoming connections... 😴" RESET
