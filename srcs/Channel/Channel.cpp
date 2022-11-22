@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 15:25:06 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/22 16:20:28 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/22 16:21:45 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,10 +72,7 @@ std::pair<bool, std::string> Channel::getTopic() const {
 
 void Channel::addToOp(User *user) {
 	_opers.insert(std::make_pair(user->getNick(), user));
-<<<<<<< HEAD
-=======
 	user->addOps(this);
->>>>>>> 9336dd569a37f558743f1d15dda9e93f125b8138
 }
 
 void Channel::removeFromOp(User *user) {

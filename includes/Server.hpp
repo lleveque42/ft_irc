@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/22 16:20:19 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/22 18:08:10 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@
 #define ERR_NOPASS ":irc.server 400 " RED "Connection refused: No password provided\r\n"
 #define ERR_NONICK ":irc.server 400 " RED "Connection refused: No nickname provided, registration not completed" RESET "\r\n"
 #define ERR_NOUSER ":irc.server 400 " RED "Connection refused: No user informations provided, registration not completed" RESET "\r\n"
+#define ERR_CANNOTSENDTOCHAN(nickname, chan_name) (":ird.server 404" RED + std::string(nickname) + " " + std::string(chan_name) + " :Cannot send to channel\r\n" RESET)
 #define ERR_UNKNOWNCOMMAND(cmd) (":irc.server 421 " RED + std::string(cmd) + ": Unknown command" RESET "\r\n")
 #define ERR_NONICKNAMEGIVEN ":irc.server 431 " RED "NICK: No nickname provided" RESET "\r\n"
 #define ERR_ERRONEUSNICKNAME ":irc.server 432 " RED "NICK: Erroneus nickname" RESET "\r\n"
