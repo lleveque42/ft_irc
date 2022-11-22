@@ -13,8 +13,9 @@
 #pragma once
 #include <iostream>
 
-class User
-{
+class Channel;
+
+class User {
 	private:
 		int			_user_sd;
 		bool		_auth;
@@ -26,6 +27,8 @@ class User
 		std::string	_user_name;
 		std::string	_real_name;
 		std::string	_host_name;
+		std::map<std::string, Channel *> _ops;
+		std::map<std::string, Channel *> _joined;
 		User();
 
 	public:

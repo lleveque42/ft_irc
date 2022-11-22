@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
+/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 15:25:06 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/22 10:47:16 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/22 15:44:29 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/Channel.hpp"
 
-Channel::Channel(std::string name) : _name(name){
+Channel::Channel(std::string name) : _name(name), _limited(false, size_t()),
+_key(false, std::string()), _topic(false, std::string()) {
 }
 
 Channel::~Channel(){
@@ -22,20 +23,72 @@ std::string const &Channel::getName() const {
 	return _name;
 }
 
-void	Channel::addUser(User *user) {
-	_users.push_back(user);
+void Channel::addUser(User *user) {
+	_users.insert(std::make_pair(user->getNick(), user));
+	// user.addChannel();
 }
 
-std::string	Channel::getUsersList()
-{
-	std::string list;
+void Channel::removeUser(User *user) {
+	_users.erase(user->getNick());
+}
 
-	for (std::vector<User *>::iterator it = _users.begin(); it != _users.end(); it++)
-	{
-		if (it != _users.begin())
-			list += " ";
-		// check if is admin to add @ ??
-		list += (*it)->getNick();
+std::string	Channel::getUsersList() {
+	std::string list;
+	std::map<std::string, User *>::iterator it = _users.begin();
+
+	if (isOp(it->second))
+		list += "@";
+	list += it->second->getNick();
+	it++;
+	for (; it != _users.end(); it++) {
+		list += " ";
+		if (isOp(it->second))
+			list += "@";
+		list += it->second->getNick();
 	}
 	return list;
+}
+
+bool Channel::isOp(User *user) {
+	return _opers.count(user->getNick());
+}
+
+std::map<std::string, User *> Channel::getUsers() const {
+	return _users;
+}
+
+std::pair<bool, size_t> Channel::getLimited() const {
+	return _limited;
+}
+
+std::pair<bool, std::string> Channel::getKey() const {
+	return _key;
+}
+
+std::pair<bool, std::string> Channel::getTopic() const {
+	return _topic;
+}
+
+void Channel::addToOp(User *user) {
+	_opers.insert(std::make_pair(user->getNick(), user));
+	// user.addOps();
+}
+
+void Channel::removeFromOp(User *user) {
+
+}
+
+void Channel::setLimited(bool value, size_t n) {
+	_limited.first = value;
+	_limited.second = n;
+}
+
+void Channel::setKey(bool value, std::string key) {
+	_key.first = value;
+	_key.second = key;
+}
+
+void Channel::setTopic(bool value, std::string topic) {
+	_topic.first = value;
+	_topic.second = topic;
 }
