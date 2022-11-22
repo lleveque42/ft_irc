@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/22 16:16:49 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/22 16:20:19 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,7 @@
 
 class Server;
 class Channel;
+class User;
 
 typedef int (Server::*cmds)(User*, std::string);
 
