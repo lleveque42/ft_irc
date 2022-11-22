@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 16:17:10 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/22 18:14:13 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/22 18:47:27 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,10 +26,12 @@ int		Server::_privmsg(User *user, std::string buff) {
 	// std::cout << "Recip second :" << recip.second << "|" << std::endl;
 	if (recip.first[0] == '#')
 	{
-		Channel *chan = _channels.find(recip.first)->second;
-		if (!chan)
+		// Channel *chan = _channels.find(recip.first)->second;
+		if (!_channels.count(recip.first))
 			return _sendError(user, ERR_CANNOTSENDTOCHAN(user->getClient(), recip.first));
-		
+		Channel *chan = _channels.find(recip.first)->second;
+		std::cout << "CHAN : " << chan->getName() << "|\n";
+		std::cout << "PAS ERROR PRIVMSG" << std::endl;
 	}
 
 	return 0;
