@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
+/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/22 15:40:05 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/22 16:16:49 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,6 +138,7 @@ class Server
 		int		_quit(User *user, std::string args);
 		int		_mode(User *user, std::string buff);
 		int		_join(User *user, std::string buff);
+		int		_privmsg(User *user, std::string buff);
 };
 
 std::string currentTime();

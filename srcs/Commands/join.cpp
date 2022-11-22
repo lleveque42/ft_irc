@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
+/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 15:35:57 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/22 15:41:18 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/22 15:50:04 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,6 @@ void Server::_sendJoinMsg(User *user, Channel *chan) {
 	_sendExecuted(user, RPL_ENDOFNAMES(user->getNick(), chan->getName()));
 }
 
-// Add chanlimit for users ?
-// Manage key ?
 // manage 0 to disco user from all chans ?
 
 int Server::_checkModes(User *user, Channel *new_chan, std::string key) {
