@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 16:17:10 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/23 12:43:35 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/23 16:35:47 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ static std::pair<std::string, std::string>	_splitPrivMsg(std::string buff) {
 
 void	Server::_sendPrivMsg(User *sender, User *target, std::string chan_name, std::string msg) {
 	std::string rpl = ":" + sender->getNick() + " PRIVMSG " + chan_name + " " + msg + "\r\n";
-	// _sendAll(target->getUserSd(), rpl.c_str(), rpl.length(), 0);
 	_sendExecuted(target, rpl);
 }
 
