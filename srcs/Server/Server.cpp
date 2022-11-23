@@ -29,6 +29,7 @@ void Server::clear() {
 }
 
 Server::~Server() {
+
 	clear();
 }
 
@@ -57,9 +58,10 @@ void Server::setup() {
 		}
 		break;
 	}
-	if (tmp == NULL) // aucune adresse de bind
+	if (tmp == NULL) { // aucune adresse de bind
+		freeaddrinfo(servinfo);
 		throw Exception::bind();
-	freeaddrinfo(servinfo);
+	}
 	if (listen(_sd, 10)) // queue toutes les connections entrantes, 10 max (arbitraire ca pourrait etre 20 au max)
 		throw Exception::listen();
 	_pfds.push_back(pollfd());
