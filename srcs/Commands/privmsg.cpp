@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 16:17:10 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/23 16:35:47 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/23 18:56:42 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,13 +34,16 @@ int		Server::_privmsg(User *user, std::string buff) {
 		targets = chan->getUsers();
 	}
 	else {
-		std::cout << "Recip is a user\n";
 		std::map<int, User *>::iterator it;
-		for (it = _users.begin(); it != _users.end(); it++)
-			if ((*it).second->getNick() == recip.first)
+		for (it = _users.begin(); it != _users.end(); it++) {
+			if ((*it).second->getNick() == recip.first) {
 				targets.insert(std::pair<std::string, User *> ((*it).second->getNick(), (*it).second));
-		if (it == _users.end())
-			return _sendError(user, ERR_NOSUCHNICK(user->getClient(), recip.first));
+				break;
+			}
+		}
+		if (targets.empty()) {
+			_sendError(user, ERR_NOSUCHNICK(user->getClient(), recip.first));
+		}
 	}
 	for (std::map<std::string, User *>::iterator it = targets.begin(); it != targets.end(); it++) {
 		if (it->second != user) { // Check chan mod ??
