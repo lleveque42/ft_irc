@@ -127,6 +127,7 @@ int Server::_disconnectUser(User *user, int ret) {
 	std::vector<pollfd>::iterator it;
 	for (it = _pfds.begin() + 1; it->fd != user->getUserSd(); it++)
 		;
+	user->removeFromAll();
 	_pfds.erase(it);
 	_users.erase(user->getUserSd());
 	_recvs.clear();

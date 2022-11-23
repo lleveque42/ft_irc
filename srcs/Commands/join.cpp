@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 15:35:57 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/23 15:41:13 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/23 17:10:59 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,10 @@ static std::vector<std::pair<std::string, std::string> > strtovec(std::string bu
 }
 
 void Server::_sendJoinMsg(User *user, Channel *chan) {
-	_sendExecuted(user, RPL_JOIN(user->getClient(), chan->getName()));
+	std::map<std::string, User *> users(chan->getUsers());
+
+	for (std::map<std::string, User *>::iterator it = users.begin(); it != users.end(); it++)
+		_sendExecuted(it->second, RPL_JOIN(user->getClient(), chan->getName()));
 	if (chan->getTopic().first)
 		_sendExecuted(user, RPL_TOPIC(user->getClient(), chan->getName(), chan->getTopic().second));
 	_sendExecuted(user, RPL_NAMEREPLY(user->getClient(), user->getNick(), chan->getName(), chan->getUsersList()));

@@ -114,12 +114,12 @@ void User::removeOps(Channel *channel) {
 }
 
 void User::removeFromAll() {
-	std::map<std::string, Channel *>::iterator ite = _joined.end();
-
-	for (std::map<std::string, Channel *>::iterator it = _joined.begin(); it != ite; it++) {
+	for (std::map<std::string, Channel *>::iterator it = _joined.begin();; it++) {
 		if (isOp(it->second))
 			it->second->removeFromOp(this);
 		it->second->removeUser(this);
+		if (!_joined.size())
+			break;
 	}
 }
 
