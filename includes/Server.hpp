@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
+/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/23 12:42:35 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/23 15:38:46 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,15 +46,16 @@
 #define PINK "\033[95m"
 #define STAR "\033[92m * \033[0m"
 
-#define RPL_WELCOME(nickname) (":irc.server 001 " + std::string(nickname) + ":\r\n")
-#define RPL_YOURHOST(nickname) (":irc.server 002 " + std::string(nickname) + " :Your host is irc.server, running version 1.0\r\n")
-#define RPL_CREATED(nickname, date) (":irc.server 003 " + std::string(nickname) + " :This server was created " + std::string(date) + "\r\n")
-#define RPL_MYINFO(nickname) (":irc.server 004 " + std::string(nickname) + " irc.server 1.0 io kl\r\n")
+#define RPL_WELCOME(client, nickname) (":" + std::string(client) + " 001 " + std::string(nickname) + "\r\n")
+#define RPL_YOURHOST(client, nickname) (":" + std::string(client) + " 002 " + std::string(nickname) + " :Your host is irc.server, running version 1.0\r\n")
+#define RPL_CREATED(client, nickname, date) (":" + std::string(client) + " 003 " + std::string(nickname) + " :This server was created " + std::string(date) + "\r\n")
+#define RPL_MYINFO(client, nickname) (":" + std::string(client) + " 004 " + std::string(nickname) + " irc.server 1.0 io kl\r\n")
 #define RPL_PASS ": " GREEN "Connection accepted !\n" BOLD ORANGE "Welcome to our IRC server !\033[00m\r\n"
 #define RPL_PASSSEND "Connection accepted: Password correct"
 #define RPL_NICK(old_nick, nickname) (":" + std::string(old_nick) + " NICK " + std::string(nickname) + "\r\n")
 #define RPL_QUIT(nickname, hostname, reason) (":" + std::string(nickname) + " QUIT :" + std::string(reason) + "\r\n")
 #define RPL_JOIN(client, chan_name) (":" + std::string(client) + " JOIN :" + std::string(chan_name) + "\r\n")
+#define RPL_WHOISUSER(client, nickuser, nickname, username, hostname, realname) (":" + std::string(client) + " 311 " + std::string(nickuser) + " " + std::string(nickname) + " " + std::string(username) + " " + std::string(hostname) + " * :" +std::string(realname) + "\r\n")
 #define RPL_TOPIC(client, chan_name, topic) (":" + std::string(client) +" 332 " + std::string(chan_name) + ": " + std::string(topic) + "\r\n")
 #define RPL_NAMEREPLY(client, nickname, chan_name, usernames) (":" + std::string(client) +" 353 " + std::string(nickname) + " = " + std::string(chan_name) + " :" + std::string(usernames) + "\r\n")
 #define RPL_ENDOFNAMES(client, nickname, chan_name) (":" + std::string(client) +" 366 " + std::string(nickname) + " " + std::string(chan_name) + " :End of /NAMES list\r\n")
@@ -143,6 +144,7 @@ class Server
 		int		_mode(User *user, std::string buff);
 		int		_join(User *user, std::string buff);
 		int		_privmsg(User *user, std::string buff);
+		int		_whois(User *user, std::string buff);
 };
 
 std::string currentTime();

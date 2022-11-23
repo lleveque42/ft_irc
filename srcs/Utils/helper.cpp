@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 09:52:20 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/22 18:21:19 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/23 15:38:24 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 #include "../../includes/User.hpp"
 
 int Server::_registrationCompleted(User *user) {
-	_sendExecuted(user, RPL_WELCOME(user->getNick()));
-	_sendExecuted(user, RPL_YOURHOST(user->getNick()));
-	_sendExecuted(user, RPL_CREATED(user->getNick(), _creation_time));
-	_sendExecuted(user, RPL_MYINFO(user->getNick()));
+	_sendExecuted(user, RPL_WELCOME(user->getClient(), user->getNick()));
+	_sendExecuted(user, RPL_YOURHOST(user->getClient(), user->getNick()));
+	_sendExecuted(user, RPL_CREATED(user->getClient(), user->getNick(), _creation_time));
+	_sendExecuted(user, RPL_MYINFO(user->getClient(), user->getNick()));
 	return 0;
 }
 

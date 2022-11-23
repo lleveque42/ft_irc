@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
+/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 15:35:57 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/22 18:15:42 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/23 15:41:13 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,11 +39,11 @@ static std::vector<std::pair<std::string, std::string> > strtovec(std::string bu
 }
 
 void Server::_sendJoinMsg(User *user, Channel *chan) {
+	_sendExecuted(user, RPL_JOIN(user->getClient(), chan->getName()));
 	if (chan->getTopic().first)
 		_sendExecuted(user, RPL_TOPIC(user->getClient(), chan->getName(), chan->getTopic().second));
 	_sendExecuted(user, RPL_NAMEREPLY(user->getClient(), user->getNick(), chan->getName(), chan->getUsersList()));
 	_sendExecuted(user, RPL_ENDOFNAMES(user->getClient(), user->getNick(), chan->getName()));
-	_sendExecuted(user, RPL_JOIN(user->getClient(), chan->getName()));
 }
 
 int Server::_checkModes(User *user, Channel *new_chan, std::string key) {
