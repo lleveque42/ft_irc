@@ -23,6 +23,7 @@ class User {
 		bool		_tried_to_auth;
 		bool		_first_try;
 		bool		_cap;
+		bool		_invisible;
 		std::string	_nick;
 		std::string	_mode;
 		std::string	_user_name;

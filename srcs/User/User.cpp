@@ -12,8 +12,8 @@
 
 #include "../../includes/User.hpp"
 
-User::User(int sd) : _user_sd(sd), _auth(0), _tried_to_auth(0), _first_try(true),
-_cap(false), _nick(), _user_name(), _real_name(), _host_name() {
+User::User(int sd) : _user_sd(sd), _auth(0), _tried_to_auth(0), _first_try(1),
+_cap(0), _invisible(0), _nick(), _user_name(), _real_name(), _host_name() {
 }
 
 User::~User() {
