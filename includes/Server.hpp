@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/22 18:15:08 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/23 12:42:35 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@
 #define ERR_NOPASS ":irc.server 400 " RED "Connection refused: No password provided\r\n"
 #define ERR_NONICK ":irc.server 400 " RED "Connection refused: No nickname provided, registration not completed" RESET "\r\n"
 #define ERR_NOUSER ":irc.server 400 " RED "Connection refused: No user informations provided, registration not completed" RESET "\r\n"
+#define ERR_NOSUCHNICK(client, chan_name) (":" + std::string(client) + " 401 " RED + std::string(chan_name) + " :No such nick\r\n" RESET)
 #define ERR_CANNOTSENDTOCHAN(client, chan_name) (":" + std::string(client) + " 404 " RED + std::string(chan_name) + " :Cannot send to channel\r\n" RESET)
 #define ERR_UNKNOWNCOMMAND(client, cmd) (":" + std::string(client) +" 421 " RED + std::string(cmd) + ": Unknown command" RESET "\r\n")
 #define ERR_NONICKNAMEGIVEN(client) ":" + std::string(client) +" 431 " RED "NICK: No nickname provided" RESET "\r\n"
@@ -132,6 +133,7 @@ class Server
 		bool	_validChars(std::string s);
 		bool	_nickAlreadyUsed(User *current, std::string s);
 		void	_sendJoinMsg(User *user, Channel *chan);
+		void	_sendPrivMsg(User *sender, User *tagret, std::string chan_name, std::string msg);
 		int		_checkModes(User *user, Channel *chan, std::string key);
 		int		_pass(User *user, std::string args);
 		int		_user(User *user, std::string args);

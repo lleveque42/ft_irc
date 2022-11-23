@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 16:17:10 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/22 18:47:27 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/23 12:43:35 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,21 +18,35 @@ static std::pair<std::string, std::string>	_splitPrivMsg(std::string buff) {
 	return std::make_pair(std::string(buff.begin(), buff.begin() + i - 1), std::string(buff.begin() + i + 1, buff.end()));
 }
 
+void	Server::_sendPrivMsg(User *sender, User *target, std::string chan_name, std::string msg) {
+	std::string rpl = ":" + sender->getNick() + " PRIVMSG " + chan_name + " " + msg + "\r\n";
+	// _sendAll(target->getUserSd(), rpl.c_str(), rpl.length(), 0);
+	_sendExecuted(target, rpl);
+}
+
 int		Server::_privmsg(User *user, std::string buff) {
-	(void)user;
-	std::cout << "BUFF privmsg : " << buff << std::endl;
-	std::pair<std::string, std::string> recip = _splitPrivMsg(buff);
-	// std::cout << "Recip first :" << recip.first << "|" << std::endl;
-	// std::cout << "Recip second :" << recip.second << "|" << std::endl;
-	if (recip.first[0] == '#')
-	{
-		// Channel *chan = _channels.find(recip.first)->second;
+	std::pair<std::string, std::string> recip = _splitPrivMsg(buff); // Nedd better check if privmsg for user ?
+	std::map<std::string, User *> targets;
+
+	if (recip.first[0] == '#') {
 		if (!_channels.count(recip.first))
 			return _sendError(user, ERR_CANNOTSENDTOCHAN(user->getClient(), recip.first));
 		Channel *chan = _channels.find(recip.first)->second;
-		std::cout << "CHAN : " << chan->getName() << "|\n";
-		std::cout << "PAS ERROR PRIVMSG" << std::endl;
+		targets = chan->getUsers();
 	}
-
+	else {
+		std::cout << "Recip is a user\n";
+		std::map<int, User *>::iterator it;
+		for (it = _users.begin(); it != _users.end(); it++)
+			if ((*it).second->getNick() == recip.first)
+				targets.insert(std::pair<std::string, User *> ((*it).second->getNick(), (*it).second));
+		if (it == _users.end())
+			return _sendError(user, ERR_NOSUCHNICK(user->getClient(), recip.first));
+	}
+	for (std::map<std::string, User *>::iterator it = targets.begin(); it != targets.end(); it++) {
+		if (it->second != user) { // Check chan mod ??
+			_sendPrivMsg(user, it->second, recip.first, recip.second);
+		}
+	}
 	return 0;
 }
