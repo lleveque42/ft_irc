@@ -20,6 +20,9 @@ Server::Server(char *port, char *password) : _creation_time(currentTime()),
 void Server::clear() {
 	_recvs.clear();
 	_cmds.clear();
+	for (std::map<std::string, Channel*>::iterator it = _channels.begin(); it != _channels.end(); it++)
+		delete (*it).second;
+	_channels.clear();
 	for (std::map<int, User*>::iterator it = _users.begin(); it != _users.end(); it++)
 		delete (*it).second;
 	_users.clear();
@@ -62,6 +65,7 @@ void Server::setup() {
 		freeaddrinfo(servinfo);
 		throw Exception::bind();
 	}
+	freeaddrinfo(servinfo);
 	if (listen(_sd, 10)) // queue toutes les connections entrantes, 10 max (arbitraire ca pourrait etre 20 au max)
 		throw Exception::listen();
 	_pfds.push_back(pollfd());
