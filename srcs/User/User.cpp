@@ -45,6 +45,16 @@ std::string const &User::getRealName() const {
 	return _real_name;
 }
 
+std::string User::getModes() {
+	std::string ret;
+
+	if (_invisible)
+		ret += "i";
+	if (_op)
+		ret += "o";
+	return ret;
+}
+
 bool const &User::getAuth() const {
 	return _auth;
 }
@@ -59,6 +69,14 @@ bool const &User::getFirstTry() const {
 
 bool const &User::getCap() const {
 	return _cap;
+}
+
+bool const &User::isOp() const {
+	return _op;
+}
+
+bool const &User::isInvisible() const {
+	return _invisible;
 }
 
 bool User::isOp(Channel *channel) {
@@ -96,6 +114,15 @@ void User::setFirstTry(bool value) {
 void User::setCap(bool value) {
 	_cap = value;
 }
+
+void User::setOp(bool value) {
+	_op = value;
+}
+
+void User::setInvisible(bool value) {
+	_invisible = value;
+}
+
 
 void User::addChannel(Channel *channel) {
 	_joined.insert(std::make_pair(channel->getName(), channel));

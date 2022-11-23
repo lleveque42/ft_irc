@@ -24,6 +24,7 @@ class User {
 		bool		_first_try;
 		bool		_cap;
 		bool		_invisible;
+		bool		_op;
 		std::string	_nick;
 		std::string	_mode;
 		std::string	_user_name;
@@ -42,10 +43,13 @@ class User {
 		std::string const	&getUserName() const;
 		std::string const	&getHostName() const;
 		std::string const	&getRealName() const;
+		std::string			getModes();
 		bool const			&getAuth() const;
 		bool const			&getTriedToAuth() const;
 		bool const			&getFirstTry() const;
 		bool const			&getCap() const;
+		bool const			&isOp() const;
+		bool const			&isInvisible() const;
 		bool				isOp(Channel *channel);
 		void				setNick(std::string value);
 		void				setUserName(std::string value);
@@ -55,6 +59,8 @@ class User {
 		void				setTriedToAuth(bool value);
 		void				setFirstTry(bool value);
 		void				setCap(bool value);
+		void				setOp(bool value);
+		void				setInvisible(bool value);
 		void				addChannel(Channel *channel);
 		void				addOps(Channel *channel);
 		void				removeChannel(Channel *channel);

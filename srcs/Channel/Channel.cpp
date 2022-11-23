@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 15:25:06 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/23 16:48:14 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/23 22:55:12 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,20 @@ std::string	Channel::getUsersList() {
 		list += it->second->getNick();
 	}
 	return list;
+}
+
+std::string Channel::getModes() {
+	std::string ret;
+
+	if (_key.first)
+		ret += "k";
+	if (_limited.first)
+		ret += "l";
+	if (_key.first)
+		ret += (" " + _key.second);
+	if (_limited.first)
+		ret +=  (" " + _limited.second);
+	return ret;
 }
 
 bool Channel::isOp(User *user) {

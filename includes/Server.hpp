@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/23 15:38:46 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/23 22:40:55 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,9 @@
 #define RPL_NICK(old_nick, nickname) (":" + std::string(old_nick) + " NICK " + std::string(nickname) + "\r\n")
 #define RPL_QUIT(nickname, hostname, reason) (":" + std::string(nickname) + " QUIT :" + std::string(reason) + "\r\n")
 #define RPL_JOIN(client, chan_name) (":" + std::string(client) + " JOIN :" + std::string(chan_name) + "\r\n")
+#define RPL_UMODEIS(client, nickname, modes) (":" + std::string(client) + " 221 " + std::string(nickname) + " +" + modes + "\r\n")
 #define RPL_WHOISUSER(client, nickuser, nickname, username, hostname, realname) (":" + std::string(client) + " 311 " + std::string(nickuser) + " " + std::string(nickname) + " " + std::string(username) + " " + std::string(hostname) + " * :" +std::string(realname) + "\r\n")
+#define RPL_CHANNELMODEIS(client, nickname, chan_name, modes) (":" + std::string(client) + " 324 " + std::string(nickname) + " " + std::string(chan_name) + " +" + std::string(modes) + "\r\n")
 #define RPL_TOPIC(client, chan_name, topic) (":" + std::string(client) +" 332 " + std::string(chan_name) + ": " + std::string(topic) + "\r\n")
 #define RPL_NAMEREPLY(client, nickname, chan_name, usernames) (":" + std::string(client) +" 353 " + std::string(nickname) + " = " + std::string(chan_name) + " :" + std::string(usernames) + "\r\n")
 #define RPL_ENDOFNAMES(client, nickname, chan_name) (":" + std::string(client) +" 366 " + std::string(nickname) + " " + std::string(chan_name) + " :End of /NAMES list\r\n")
@@ -64,18 +66,22 @@
 #define ERR_NOPASS ":irc.server 400 " RED "Connection refused: No password provided\r\n"
 #define ERR_NONICK ":irc.server 400 " RED "Connection refused: No nickname provided, registration not completed" RESET "\r\n"
 #define ERR_NOUSER ":irc.server 400 " RED "Connection refused: No user informations provided, registration not completed" RESET "\r\n"
-#define ERR_NOSUCHNICK(client, chan_name) (":" + std::string(client) + " 401 " RED + std::string(chan_name) + " :No such nick\r\n" RESET)
+#define ERR_NOSUCHNICK(client, nickname) (":" + std::string(client) + " 401 " + std::string(nickname) + RED + " :No such nick\r\n" RESET)
+#define ERR_NOSUCHCHANNEL(client, chan_name) (":" + std::string(client) + " 401 " + std::string(chan_name) + RED + " :No such channel\r\n" RESET)
 #define ERR_CANNOTSENDTOCHAN(client, chan_name) (":" + std::string(client) + " 404 " RED + std::string(chan_name) + " :Cannot send to channel\r\n" RESET)
-#define ERR_UNKNOWNCOMMAND(client, cmd) (":" + std::string(client) +" 421 " RED + std::string(cmd) + ": Unknown command" RESET "\r\n")
-#define ERR_NONICKNAMEGIVEN(client) ":" + std::string(client) +" 431 " RED "NICK: No nickname provided" RESET "\r\n"
-#define ERR_ERRONEUSNICKNAME(client) ":" + std::string(client) +" 432 " RED "NICK: Erroneus nickname" RESET "\r\n"
-#define ERR_NICKNAMEINUSE(client) ":" + std::string(client) +" 433 " RED "NICK: Nickname is already in use" RESET "\r\n"
-#define ERR_NEEDMOREPARAMS(client, cmd) (":" + std::string(client) +" 461 " RED + std::string(cmd) + ": Not enough parameters" RESET "\r\n")
-#define ERR_NOPREFIX(client, cmd) (":" + std::string(client) +" 461 " RED + std::string(cmd) + ": No prefix before last param" RESET "\r\n")
+#define ERR_UNKNOWNCOMMAND(client, cmd) (":" + std::string(client) +" 421 " RED + std::string(cmd) + " :Unknown command" RESET "\r\n")
+#define ERR_NONICKNAMEGIVEN(client) ":" + std::string(client) +" 431 " RED "NICK :No nickname provided" RESET "\r\n"
+#define ERR_ERRONEUSNICKNAME(client) ":" + std::string(client) +" 432 " RED "NICK :Erroneus nickname" RESET "\r\n"
+#define ERR_NICKNAMEINUSE(client) ":" + std::string(client) +" 433 " RED "NICK :Nickname is already in use" RESET "\r\n"
+#define ERR_NEEDMOREPARAMS(client, cmd) (":" + std::string(client) +" 461 " RED + std::string(cmd) + " :Not enough parameters" RESET "\r\n")
+#define ERR_NOPREFIX(client, cmd) (":" + std::string(client) +" 461 " RED + std::string(cmd) + " :No prefix before last param" RESET "\r\n")
 #define ERR_ALREADYREGISTERED(client, cmd) ":" + std::string(client) +" 462 " RED "USER: You may not reregister" RESET "\r\n"
 #define ERR_PASSWDMISMATCH(client) ":" + std::string(client) +" 464 " RED "Connection refused: Password incorrect" RESET "\r\n"
-#define ERR_BADCHANNELKEY(client, chan_name) (":" + std::string(client) +" 465 " RED + std::string(chan_name) + ": Cannot join channel (+k)" RESET "\r\n")
-#define ERR_CHANNELISFULL(client, chan_name) (":" + std::string(client) +" 471 " + std::string(chan_name) + ": Cannot join channel (+l)" RESET "\r\n")
+#define ERR_BADCHANNELKEY(client, chan_name) (":" + std::string(client) +" 465 " RED + std::string(chan_name) + " :Cannot join channel (+k)" RESET "\r\n")
+#define ERR_CHANNELISFULL(client, chan_name) (":" + std::string(client) +" 471 " RED + std::string(chan_name) + " :Cannot join channel (+l)" RESET "\r\n")
+#define ERR_CHANOPRIVSNEEDED(client, chan_name) (":" + std::string(client) +" 471 " RED + std::string(chan_name) + " :You're not a channel operator" RESET "\r\n")
+#define ERR_UMODEUNKNOWNFLAG(client) (":" + std::string(client) + " 501 " RED ":Uknown MODE flag\r\n")
+#define ERR_USERSDONTMATCH(client) (":" + std::string(client) + " 502 :Cant change mode for other users" RESET "\r\n")
 
 #define DIS_CREATED(date) (ORANGE BOLD "[ircserv]" RESET BOLD " created " + std::string(date) + RESET)
 #define DIS_WAITCONNEC ORANGE BOLD "[ircserv]" RESET BOLD " waiting for incoming connections... 😴" RESET
@@ -141,6 +147,8 @@ class Server
 		int		_nick(User *user, std::string buff);
 		int		_pong(User *user, std::string buff);
 		int		_quit(User *user, std::string args);
+		int		_applyMode(User *user, std::string mode, bool value);
+		int		_applyMode(User *user, Channel *channel, std::string buff, bool value);
 		int		_mode(User *user, std::string buff);
 		int		_join(User *user, std::string buff);
 		int		_privmsg(User *user, std::string buff);

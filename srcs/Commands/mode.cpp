@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 13:15:43 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/23 15:31:57 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/23 22:58:26 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,68 +14,125 @@
 #include "../../includes/User.hpp"
 #include "../../includes/Channel.hpp"
 
-// static int _applyMode(User *user, std::string mode, bool value) {
-// 	for (int i = 0; i < mode.length(); i++) {
-// 		if (mode[i] == 'i')
-// 			// user.setInvisble(value);
-// 		else if (mode[i] == 'o' && value == false)
-// 			// user.setOp(value);
-// 		else
-// 			return 1; //ERR_UMODEUNKNOWNFLAG (501)
-// 	}
-// }
+int Server::_applyMode(User *user, std::string mode, bool value) {
+	for (size_t i = 0; i < mode.length(); i++) {
+		if (mode[i] == 'i')
+			user->setInvisible(value);
+		else if (mode[i] == 'o' && value == false)
+			user->setOp(value);
+		else
+			_sendError(user, ERR_UMODEUNKNOWNFLAG(user->getClient()));
+	}
+	return 0;
+}
 
-// static int _applyMode(Channel *channel, std::string mode, bool value) {
-// 	for (int i = 0; i < mode.length(); i++) {
-// 		if (mode[i] == 'l') {
+static std::vector<std::pair<char, std::string> > modeToVec(std::string mode, std::string arg) {
+	size_t delimiter;
+	std::vector<std::pair<char, std::string> > pairs;
 
-// 		}
-// 		else if (mode[i] == 'k') {
+	for (size_t i = 0; i < mode.size(); i++) {
+		delimiter = arg.find(' ');
+		if (delimiter != arg.npos) {
+			pairs.push_back(std::make_pair(mode[i], std::string(arg.begin(), arg.begin() + delimiter)));
+			arg.erase(arg.begin(), arg.begin() + delimiter + 1);
+		}
+		else {
+			if (arg.empty())
+				pairs.push_back(std::make_pair(mode[i], std::string()));
+			else {
+				pairs.push_back(std::make_pair(mode[i], std::string(arg.begin(), arg.end())));
+				arg.erase(arg.begin(), arg.end());
+			}
+		}
+	}
+	return pairs;
+}
 
-// 		}
-// 		else
-// 			return 1; //ERR_UMODEUNKNOWNFLAG (501)
-// 	}
-// }
+int Server::_applyMode(User *user, Channel *channel, std::string buff, bool value) {
+	size_t delimiter;
+	std::string mode;
+	std::string arg;
+	std::vector<std::pair<char, std::string> > pairs;
 
-// int	Server::_mode(User *user, std::string buff) {
-// 	bool value;
-// 	size_t delimiter;
-// 	std::string mode;
-// 	std::string target;
+	delimiter = buff.find(' ');
+	if (delimiter == buff.npos) {
+		mode = std::string(buff.begin(), buff.end());
+		arg = "";
+	}
+	else {
+		mode = std::string(buff.begin(), buff.begin() + delimiter);
+		arg = std::string(buff.begin() + delimiter + 1, buff.end());
+	}
+	pairs = modeToVec(mode, arg);
+	for (std::vector<std::pair<char, std::string> >::iterator it = pairs.begin(); it != pairs.end(); it++) {
+		if (it->first == 'l') {
+			int limit;
+			if (value && it->second.empty()) {
+				_sendError(user, ERR_NEEDMOREPARAMS(user->getClient(), "MODE"));
+				continue;
+			}
+			else if (value && !(limit = atoi(it->second.c_str())))
+				continue ;
+			channel->setLimited(value, atoi(it->second.c_str()));
+		}
+		else if (it->first == 'k') {
+			if (value && it->second.empty()) {
+				_sendError(user, ERR_NEEDMOREPARAMS(user->getClient(), "MODE"));
+				continue;
+			}
+			channel->setKey(value, it->second);
+		}
+		else
+			_sendError(user, ERR_UMODEUNKNOWNFLAG(user->getClient()));
+	}
+	return 0;
+}
 
-// 	if (buff[0] != '#' && (delimiter = buff.find(':')) == buff.npos)
-// 		return 1; // RPL_UMODEIS (221)
-// 	else if ((delimiter = buff.find(':')) == buff.npos)
-// 		return 1; // RPL_CHANNELMODEIS (221)
-// 	target = std::string(buff.begin(), buff.begin() + delimiter);
-// 	mode = std::string(buff.begin() + delimiter + 2, buff.end());
-// 	if (mode[0] == '+')
-// 		value = true;
-// 	else  if (mode[0] != '-')
-// 		return 1; //ERR_NOPREFIX (461)
-// 	mode.erase(mode.begin());
-// 	if (target[0] != '#') {
-// 		std::map<int, User *>::iterator it;
-// 		for (it = _users.begin(); it != _users.end(); it++)
-// 			if (it->second->getNick() == buff)
-// 				break;
-// 		if (it == _users.end())
-// 			return 1; //ERR_NOSUCHNICK (401)
-// 		if (user->getNick() != target)
-// 			return 1; //ERR_USERDONTMATCH (502)
-// 		return _applyMode(user, mode, value);
-// 	}
-// 	else {
-// 		Channel *channel_moded = NULL;
-// 		if (!_channels.count(target))
-// 			return 1; //ERR_NOSUCHCHANNEL (403)
-// 		channel_moded = _channels[target];
-// 		if (!channel_moded->isOp(user))
-// 			return 1; //ERR_CHANOPRIVSNEEDED (482)
-// 		return _applyMode(_channels[target], mode, value);
-// 	}
-// 	// std::cout << "|" << nick << "|"  << std::endl;
-// 	// std::cout << "|" << mode << "|"  << std::endl;
-// 	return 0;
-// }
+int	Server::_mode(User *user, std::string buff) {
+	bool value;
+	size_t delimiter;
+	std::string mode;
+	std::string target;
+
+	if (buff.empty())
+		return _sendError(user, ERR_NEEDMOREPARAMS(user->getClient(), "MODE"));
+	delimiter = buff.find(' ');
+	if (delimiter == buff.npos) {
+		target = std::string(buff.begin(), buff.end());
+		mode = "";
+	}
+	else {
+		target = std::string(buff.begin(), buff.begin() + delimiter);
+		mode = std::string(buff.begin() + delimiter + 1, buff.end());
+	}
+	if (!mode.empty()) {
+		if (mode[0] == '+')
+			value = true;
+		mode.erase(mode.begin());
+	}
+	if (target[0] != '#') {
+		std::map<int, User *>::iterator it;
+		for (it = _users.begin(); it != _users.end(); it++)
+			if (it->second->getNick() == buff)
+				break;
+		if (--it == _users.end())
+			return _sendError(user, ERR_NOSUCHNICK(user->getClient(), user->getNick()));
+		if (user->getNick() != target)
+			return _sendError(user, ERR_USERSDONTMATCH(user->getClient()));
+		if (!mode.empty())
+			_applyMode(user, mode, value);
+		return _sendExecuted(user, RPL_UMODEIS(user->getClient(), user->getNick(), user->getModes()));
+	}
+	else {
+		Channel *channel_moded = NULL;
+		if (!_channels.count(target))
+			return _sendError(user, ERR_NOSUCHCHANNEL(user->getClient(), channel_moded->getName()));
+		channel_moded = _channels[target];
+		if (!mode.empty() && !channel_moded->isOp(user))
+			return _sendError(user, ERR_CHANOPRIVSNEEDED(user->getClient(), channel_moded->getName()));
+		if (!mode.empty())
+			_applyMode(user, _channels[target], mode, value);
+		return _sendExecuted(user, RPL_CHANNELMODEIS(user->getClient(), user->getNick(), channel_moded->getName(), channel_moded->getModes()));
+	}
+	return 0;
+}

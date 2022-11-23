@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 09:32:47 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/23 15:32:20 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/23 17:23:04 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void Server::_initCmd() {
 	_cmds["NICK"] = &Server::_nick;
 	_cmds["PING"] = &Server::_pong;
 	_cmds["QUIT"] = &Server::_quit;
-	// _cmds["MODE"] = &Server::_mode;
+	_cmds["MODE"] = &Server::_mode;
 	_cmds["JOIN"] = &Server::_join;
 	_cmds["PRIVMSG"] = &Server::_privmsg;
 	_cmds["WHOIS"] = &Server::_whois;

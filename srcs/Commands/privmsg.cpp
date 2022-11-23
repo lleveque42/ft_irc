@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   privmsg.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
+/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 16:17:10 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/23 12:43:35 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/23 22:37:07 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int		Server::_privmsg(User *user, std::string buff) {
 			if ((*it).second->getNick() == recip.first)
 				targets.insert(std::pair<std::string, User *> ((*it).second->getNick(), (*it).second));
 		if (it == _users.end())
-			return _sendError(user, ERR_NOSUCHNICK(user->getClient(), recip.first));
+			return _sendError(user, ERR_NOSUCHNICK(user->getClient(), user->getNick()));
 	}
 	for (std::map<std::string, User *>::iterator it = targets.begin(); it != targets.end(); it++) {
 		if (it->second != user) { // Check chan mod ??
