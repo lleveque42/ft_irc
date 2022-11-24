@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 16:17:10 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/24 11:11:26 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/24 11:18:29 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int		Server::_privmsg(User *user, std::string buff) {
 	std::map<std::string, User *> targets;
 	if (recip.first[0] == '#') {
 		if (!_channels.count(recip.first))
-			return _sendError(user, ERR_NOSUCHCHANNEL(user->getClient(), recip.first));
+			return _sendError(user, ERR_NOSUCHCHANNEL(user->getClient(), user->getNick(), recip.first));
 		Channel *chan = _channels.find(recip.first)->second;
 		targets = chan->getUsers();
 	}
@@ -50,8 +50,7 @@ int		Server::_privmsg(User *user, std::string buff) {
 			}
 		}
 		if (targets.empty()) {
-			_sendError(user, ERR_NOSUCHNICK(user->getClient(), recip.first));
-			// _sendAll(user->getUserSd(), ERR_NOSUCHNICK(user->getClient(), recip.first).c_str(), ERR_NOSUCHNICK(user->getClient(), recip.first).length(), 0);
+			_sendError(user, ERR_NOSUCHNICK(user->getClient(), user->getNick(), recip.first));
 		}
 	}
 	for (std::map<std::string, User *>::iterator it = targets.begin(); it != targets.end(); it++) {

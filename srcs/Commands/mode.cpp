@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 13:15:43 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/23 22:58:26 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/24 11:15:31 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,7 @@ int	Server::_mode(User *user, std::string buff) {
 			if (it->second->getNick() == buff)
 				break;
 		if (--it == _users.end())
-			return _sendError(user, ERR_NOSUCHNICK(user->getClient(), user->getNick()));
+			return _sendError(user, ERR_NOSUCHNICK(user->getClient(), user->getNick(), target));
 		if (user->getNick() != target)
 			return _sendError(user, ERR_USERSDONTMATCH(user->getClient()));
 		if (!mode.empty())
@@ -126,7 +126,7 @@ int	Server::_mode(User *user, std::string buff) {
 	else {
 		Channel *channel_moded = NULL;
 		if (!_channels.count(target))
-			return _sendError(user, ERR_NOSUCHCHANNEL(user->getClient(), channel_moded->getName()));
+			return _sendError(user, ERR_NOSUCHCHANNEL(user->getClient(), user->getNick(), channel_moded->getName()));
 		channel_moded = _channels[target];
 		if (!mode.empty() && !channel_moded->isOp(user))
 			return _sendError(user, ERR_CHANOPRIVSNEEDED(user->getClient(), channel_moded->getName()));
