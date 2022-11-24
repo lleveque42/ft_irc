@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 16:17:10 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/23 23:03:59 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/24 11:11:28 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int		Server::_privmsg(User *user, std::string buff) {
 			}
 		}
 		if (targets.empty()) {
-			_sendError(user, ERR_NOSUCHNICK(user->getClient(), recip.first));
+			_sendError(user, ERR_NOSUCHNICK(user->getClient(), user->getNick(), recip.first));
 		}
 	}
 	for (std::map<std::string, User *>::iterator it = targets.begin(); it != targets.end(); it++) {
