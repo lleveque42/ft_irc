@@ -30,7 +30,7 @@ std::string const User::getClient() const {
 }
 
 std::string const User::getNick() const {
-	if (getFirstTry())
+	if (_nick.empty())
 		return "";
 	return _nick;
 }
