@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
+/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/24 13:12:22 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/24 18:04:29 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,8 @@
 #define RPL_TOPIC(client, chan_name, topic) (":" + std::string(client) +" 332 " + std::string(chan_name) + ": " + std::string(topic) + "\r\n")
 #define RPL_NAMEREPLY(client, nickname, chan_name, usernames) (":" + std::string(client) +" 353 " + std::string(nickname) + " = " + std::string(chan_name) + " :" + std::string(usernames) + "\r\n")
 #define RPL_ENDOFNAMES(client, nickname, chan_name) (":" + std::string(client) +" 366 " + std::string(nickname) + " " + std::string(chan_name) + " :End of /NAMES list\r\n")
+#define RPL_PARTMSG(client, nickname, chan_name, msg) (":" + std::string(client) + std::string(nickname) + " PART " + std::string(chan_name) + " :" + msg + "\r\n")
+#define RPL_PARTNOMSG(client, nickname, chan_name) (":" + std::string(client) + std::string(nickname) + " PART " + std::string(chan_name) + " :" + "\r\n")
 
 #define ERR_NOCAP ":irc.server 400 " RED "Connection refused: No cap provided" RESET "\r\n"
 #define ERR_NOPASS ":irc.server 400 " RED "Connection refused: No password provided\r\n"
@@ -75,6 +77,7 @@
 #define ERR_NONICKNAMEGIVEN(client, nickname) ":" + std::string(client) +" 431 " + std::string(nickname) +  RED " NICK :No nickname provided" RESET "\r\n"
 #define ERR_ERRONEUSNICKNAME(client, nickname) ":" + std::string(client) +" 432 " + std::string(nickname) +  RED " NICK :Erroneus nickname" RESET "\r\n"
 #define ERR_NICKNAMEINUSE(client, nickname) ":" + std::string(client) +" 433 " + std::string(nickname) +  RED " NICK :Nickname is already in use" RESET "\r\n"
+#define ERR_NOTONCHANNEL(client, nickname, chan_name) (":" + std::string(client) + " 442 " + std::string(nickname) + " " + RED + std::string(chan_name) + " :You're not on channel\r\n" RESET)
 #define ERR_NEEDMOREPARAMS(client, nickname, cmd) (":" + std::string(client) +" 461 " + std::string(nickname) + " " + RED + std::string(cmd) + " :Not enough parameters" RESET "\r\n")
 #define ERR_NOPREFIX(client, nickname, cmd) (":" + std::string(client) +" 461 " + std::string(nickname) + " " + RED + std::string(cmd) + " :No prefix before last param" RESET "\r\n")
 #define ERR_ALREADYREGISTERED(client, nickname, cmd) ":" + std::string(client) +" 462 " + std::string(nickname) + RED " USER: You may not reregister" RESET "\r\n"
@@ -143,6 +146,7 @@ class Server
 		bool	_nickAlreadyUsed(User *current, std::string s);
 		void	_sendJoinMsg(User *user, Channel *chan);
 		void	_sendPrivMsg(User *sender, User *tagret, std::string chan_name, std::string msg);
+		void	_sendPartMsg(User *sender, std::map<std::string, User *> targets, std::string chan_name, std::string msg);
 		int		_checkModes(User *user, Channel *chan, std::string key);
 		int		_pass(User *user, std::string args);
 		int		_user(User *user, std::string args);
@@ -153,6 +157,7 @@ class Server
 		int		_applyMode(User *user, Channel *channel, std::string buff, bool value);
 		int		_mode(User *user, std::string buff);
 		int		_join(User *user, std::string buff);
+		int		_part(User *user, std::string buff);
 		int		_privmsg(User *user, std::string buff);
 		int		_whois(User *user, std::string buff);
 };

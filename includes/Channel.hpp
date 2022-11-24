@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
+/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 15:26:42 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/23 21:20:18 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/24 18:14:26 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ class Channel {
 		std::pair<bool, std::string>	_key;
 		std::pair<bool, std::string>	_topic;
 		std::map<std::string, User *>	_users;
-		std::map<std::string, User *>	_opers; // keep map ?
+		std::map<std::string, User *>	_opers;
 
 	public:
 		Channel(std::string name);
