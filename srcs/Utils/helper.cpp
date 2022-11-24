@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 09:52:20 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/23 15:38:24 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/24 12:05:49 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ bool	Server::_nickAlreadyUsed(User *current, std::string s) {
 }
 
 int Server::_acceptConnection(User *user, std::pair<std::string, std::string> cmd) {
-	if (!user->getCap() && cmd.first == "CAP" && cmd.second == "LS")
+	if (!user->getCap() && cmd.first == "CAP" && cmd.second[0] == 'L' && cmd.second[1] == 'S')
 		return user->setCap(true), 0;
 	else if (!user->getTriedToAuth() && cmd.first == "PASS") {
 		if (!user->getCap())
