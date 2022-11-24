@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
+/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/23 23:05:50 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/24 11:15:17 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,9 +66,11 @@
 #define ERR_NOPASS ":irc.server 400 " RED "Connection refused: No password provided\r\n"
 #define ERR_NONICK ":irc.server 400 " RED "Connection refused: No nickname provided, registration not completed" RESET "\r\n"
 #define ERR_NOUSER ":irc.server 400 " RED "Connection refused: No user informations provided, registration not completed" RESET "\r\n"
-#define ERR_NOSUCHNICK(client, target) (":" + std::string(client) + " 401 " RED + std::string(target) + " :No such nick/channel\r\n" RESET)
-#define ERR_NOSUCHCHANNEL(client, chan_name) (":" + std::string(client) + " 401 " + std::string(chan_name) + RED + " :No such channel\r\n" RESET)
-#define ERR_CANNOTSENDTOCHAN(client, target) (":" + std::string(client) + " 404 " RED + std::string(target) + " :Cannot send to channel\r\n" RESET)
+#define ERR_NOSUCHNICK(client, target) (":" + std::string(client) + " 401 " + std::string(target) + "\r\n")
+#define ERR_NOSUCHCHANNEL(client, chan_name) (":" + std::string(client) + " 403 " + std::string(chan_name) + RED + " :No such channel" RESET "\r\n")
+#define ERR_CANNOTSENDTOCHAN(client, target) (":" + std::string(client) + " 404 " RED + std::string(target) + " :Cannot send to channel" RESET "\r\n")
+#define ERR_NORECIPIENT(client) (":" + std::string(client) + " 411 " RED ":No recipient given (PRIVMSG)" RESET "\r\n")
+#define ERR_NOTEXTTOSEND(client) (":" + std::string(client) + " 412 " RED ":No text to send" RESET "\r\n")
 #define ERR_UNKNOWNCOMMAND(client, cmd) (":" + std::string(client) +" 421 " RED + std::string(cmd) + " :Unknown command" RESET "\r\n")
 #define ERR_NONICKNAMEGIVEN(client) ":" + std::string(client) +" 431 " RED "NICK :No nickname provided" RESET "\r\n"
 #define ERR_ERRONEUSNICKNAME(client) ":" + std::string(client) +" 432 " RED "NICK :Erroneus nickname" RESET "\r\n"
