@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
+/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 15:35:57 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/23 17:10:59 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/24 13:09:36 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,9 +51,9 @@ void Server::_sendJoinMsg(User *user, Channel *chan) {
 
 int Server::_checkModes(User *user, Channel *new_chan, std::string key) {
 	if (new_chan->getKey().first && new_chan->getKey().second != key)
-		return _sendError(user, ERR_BADCHANNELKEY(user->getClient(), new_chan->getName()));
+		return _sendError(user, ERR_BADCHANNELKEY(user->getClient(), user->getNick(), new_chan->getName()));
 	if (new_chan->getLimited().first && new_chan->getLimited().second == new_chan->getUsers().size())
-		return _sendError(user, ERR_CHANNELISFULL(user->getClient(), new_chan->getName()));
+		return _sendError(user, ERR_CHANNELISFULL(user->getClient(), user->getNick(), new_chan->getName()));
 	return 0;
 }
 

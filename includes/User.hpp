@@ -39,7 +39,7 @@ class User {
 		~User();
 		int const			&getUserSd() const;
 		std::string const	getClient() const;
-		std::string const	&getNick() const;
+		std::string const	getNick() const;
 		std::string const	&getUserName() const;
 		std::string const	&getHostName() const;
 		std::string const	&getRealName() const;

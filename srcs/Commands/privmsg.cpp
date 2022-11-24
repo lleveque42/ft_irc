@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 16:17:10 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/24 11:18:29 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/24 13:09:56 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,9 @@ void	Server::_sendPrivMsg(User *sender, User *target, std::string chan_name, std
 int		Server::_privmsg(User *user, std::string buff) {
 	std::pair<std::string, std::string> recip = _splitPrivMsg(buff);
 	if (recip.first.empty())
-		return _sendError(user, ERR_NORECIPIENT(user->getClient()));
+		return _sendError(user, ERR_NORECIPIENT(user->getClient(), user->getNick()));
 	if (recip.second.empty())
-		return _sendError(user, ERR_NOTEXTTOSEND(user->getClient()));
+		return _sendError(user, ERR_NOTEXTTOSEND(user->getClient(), user->getNick()));
 
 	std::map<std::string, User *> targets;
 	if (recip.first[0] == '#') {
@@ -50,7 +50,12 @@ int		Server::_privmsg(User *user, std::string buff) {
 			}
 		}
 		if (targets.empty()) {
-			_sendError(user, ERR_NOSUCHNICK(user->getClient(), user->getNick(), recip.first));
+			// std::string rpl = ":" + user->getClient() + " PRIVMSG " + recip.first + " " + ERR_NOSUCHNICK(user->getClient(), user->getNick(), recip.first) + "\r\n";
+			// // _sendExecuted(target, rpl);
+			// _sendAll(user->getUserSd(), rpl.c_str(), rpl.length(), 0);
+			// return 1;
+			// _sendError(user, rpl);
+			return _sendError(user, ERR_NOSUCHNICK(user->getClient(), user->getNick(), recip.first));
 		}
 	}
 	for (std::map<std::string, User *>::iterator it = targets.begin(); it != targets.end(); it++) {

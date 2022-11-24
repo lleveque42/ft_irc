@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pass.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
+/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 11:41:27 by lleveque          #+#    #+#             */
-/*   Updated: 2022/11/22 16:55:36 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/24 13:07:45 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 int	Server::_pass(User *user, std::string args) {
 	user->setTriedToAuth(true);
 	if (user->getAuth())
-		return _sendError(user, ERR_ALREADYREGISTERED(user->getClient(), "PASS"));
+		return _sendError(user, ERR_ALREADYREGISTERED(user->getClient(), user->getNick(), "PASS"));
 	if (args != _password)
 		return _disconnectUser(user, 2);
 	user->setAuth(true);
