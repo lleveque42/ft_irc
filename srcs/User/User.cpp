@@ -29,7 +29,9 @@ std::string const User::getClient() const {
 	return (getNick() + "!" + getUserName() + "@" + getHostName());
 }
 
-std::string const &User::getNick() const {
+std::string const User::getNick() const {
+	if (getFirstTry())
+		return "";
 	return _nick;
 }
 

@@ -116,7 +116,7 @@ int Server::_disconnectUser(User *user, int ret) {
 	if (!user->getCap())
 		_sendError(user, ERR_NOCAP);
 	else if (user->getTriedToAuth() && !user->getAuth())
-		_sendError(user, ERR_PASSWDMISMATCH(user->getClient()));
+		_sendError(user, ERR_PASSWDMISMATCH(user->getClient(), user->getNick()));
 	else if (user->getTriedToAuth() && user->getNick() == "")
 		_sendError(user, ERR_NONICK);
 	else if (user->getTriedToAuth() && user->getUserName() == "")
@@ -161,7 +161,7 @@ int Server::_manageRequest(pollfd pfd) {
 			if (status == 2)
 				break;
 			else if (status == 3)
-				_sendError(_users[pfd.fd], ERR_UNKNOWNCOMMAND(_users[pfd.fd]->getClient(), _recvs[i].first));
+				_sendError(_users[pfd.fd], ERR_UNKNOWNCOMMAND(_users[pfd.fd]->getClient(), _users[pfd.fd]->getNick(), _recvs[i].first));
 		}
 	}
 	return 0;

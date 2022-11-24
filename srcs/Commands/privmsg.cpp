@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 16:17:10 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/24 12:08:10 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/24 13:09:56 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,9 @@ void	Server::_sendPrivMsg(User *sender, User *target, std::string chan_name, std
 int		Server::_privmsg(User *user, std::string buff) {
 	std::pair<std::string, std::string> recip = _splitPrivMsg(buff);
 	if (recip.first.empty())
-		return _sendError(user, ERR_NORECIPIENT(user->getClient()));
+		return _sendError(user, ERR_NORECIPIENT(user->getClient(), user->getNick()));
 	if (recip.second.empty())
-		return _sendError(user, ERR_NOTEXTTOSEND(user->getClient()));
+		return _sendError(user, ERR_NOTEXTTOSEND(user->getClient(), user->getNick()));
 
 	std::map<std::string, User *> targets;
 	if (recip.first[0] == '#') {

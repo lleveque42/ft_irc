@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 13:15:43 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/24 12:46:47 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/24 13:09:10 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int Server::_applyMode(User *user, std::string mode, bool value) {
 		else if (mode[i] == 'o' && value == false)
 			user->setOp(value);
 		else
-			_sendError(user, ERR_UMODEUNKNOWNFLAG(user->getClient()));
+			_sendError(user, ERR_UMODEUNKNOWNFLAG(user->getClient(), user->getNick()));
 	}
 	return 0;
 }
@@ -68,7 +68,7 @@ int Server::_applyMode(User *user, Channel *channel, std::string buff, bool valu
 		if (it->first == 'l') {
 			int limit;
 			if (value && it->second.empty()) {
-				_sendError(user, ERR_NEEDMOREPARAMS(user->getClient(), "MODE"));
+				_sendError(user, ERR_NEEDMOREPARAMS(user->getClient(), user->getNick(), "MODE"));
 				continue;
 			}
 			else if (value && !(limit = atoi(it->second.c_str())))
@@ -77,13 +77,13 @@ int Server::_applyMode(User *user, Channel *channel, std::string buff, bool valu
 		}
 		else if (it->first == 'k') {
 			if (value && it->second.empty()) {
-				_sendError(user, ERR_NEEDMOREPARAMS(user->getClient(), "MODE"));
+				_sendError(user, ERR_NEEDMOREPARAMS(user->getClient(), user->getNick(), "MODE"));
 				continue;
 			}
 			channel->setKey(value, it->second);
 		}
 		else
-			_sendError(user, ERR_UMODEUNKNOWNFLAG(user->getClient()));
+			_sendError(user, ERR_UMODEUNKNOWNFLAG(user->getClient(), user->getNick()));
 	}
 	return 0;
 }
@@ -95,7 +95,7 @@ int	Server::_mode(User *user, std::string buff) {
 	std::string target;
 
 	if (buff.empty())
-		return _sendError(user, ERR_NEEDMOREPARAMS(user->getClient(), "MODE"));
+		return _sendError(user, ERR_NEEDMOREPARAMS(user->getClient(), user->getNick(), "MODE"));
 	delimiter = buff.find(' ');
 	if (delimiter == buff.npos) {
 		target = std::string(buff.begin(), buff.end());
@@ -118,7 +118,7 @@ int	Server::_mode(User *user, std::string buff) {
 		if (--it == _users.end())
 			return _sendError(user, ERR_NOSUCHNICK(user->getClient(), user->getNick(), target));
 		if (user->getNick() != target)
-			return _sendError(user, ERR_USERSDONTMATCH(user->getClient()));
+			return _sendError(user, ERR_USERSDONTMATCH(user->getClient(), user->getNick()));
 		if (!mode.empty())
 			_applyMode(user, mode, value);
 		return _sendExecuted(user, RPL_UMODEIS(user->getClient(), user->getNick(), user->getModes()));
@@ -129,7 +129,7 @@ int	Server::_mode(User *user, std::string buff) {
 			return _sendError(user, ERR_NOSUCHCHANNEL(user->getClient(), user->getNick(), target));
 		channel_moded = _channels[target];
 		if (!mode.empty() && !channel_moded->isOp(user))
-			return _sendError(user, ERR_CHANOPRIVSNEEDED(user->getClient(), channel_moded->getName()));
+			return _sendError(user, ERR_CHANOPRIVSNEEDED(user->getClient(), user->getNick(), channel_moded->getName()));
 		if (!mode.empty())
 			_applyMode(user, _channels[target], mode, value);
 		return _sendExecuted(user, RPL_CHANNELMODEIS(user->getClient(), user->getNick(), channel_moded->getName(), channel_moded->getModes()));
