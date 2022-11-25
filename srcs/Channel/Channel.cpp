@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
+/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 15:25:06 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/24 18:26:32 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/25 14:44:12 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void Channel::addUser(User *user) {
 }
 
 void Channel::removeUser(User *user) {
-	if (user->isOp())
+	if (user->isOp(this))
 		user->removeOps(this);
 	_users.erase(user->getNick());
 	user->removeChannel(this);

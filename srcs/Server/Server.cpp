@@ -13,7 +13,8 @@
 #include "../../includes/Server.hpp"
 
 Server::Server(char *port, char *password) : _creation_time(currentTime()),
- _password(password), _port(port), _pfds(), _fd_count(0) {
+ _password(password), _port(port), _pfds(), _fd_count(0), _op_name("ircadmin"),
+ _op_password("ircpassword") {
 	_initCmd();
 }
 
