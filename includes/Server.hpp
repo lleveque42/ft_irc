@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/24 18:04:29 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/25 10:24:11 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@
 #define ERR_NOPASS ":irc.server 400 " RED "Connection refused: No password provided\r\n"
 #define ERR_NONICK ":irc.server 400 " RED "Connection refused: No nickname provided, registration not completed" RESET "\r\n"
 #define ERR_NOUSER ":irc.server 400 " RED "Connection refused: No user informations provided, registration not completed" RESET "\r\n"
-#define ERR_NOSUCHNICK(client, nickname, target) (":" + std::string(client) + std::string(nickname) + " 401 " RED + std::string(target) + " :No such nick/channel\r\n" RESET)
+#define ERR_NOSUCHNICK(client, nickname, target) (":" + std::string(client) + std::string(nickname) + " 401 " RED + "\r\n" RESET)
 #define ERR_NOSUCHCHANNEL(client, nickname, chan_name) (":" + std::string(client) + " 403 " + std::string(nickname) + " " + RED + std::string(chan_name) + " :No such channel\r\n" RESET)
 #define ERR_CANNOTSENDTOCHAN(client, nickname, target) (":" + std::string(client) + " 404 " RED + std::string(target) + " :Cannot send to channel\r\n" RESET)
 #define ERR_NORECIPIENT(client, nickname) (":" + std::string(client) + " 411 " + std::string(nickname) + RED " :No recipient given (PRIVMSG)" RESET "\r\n")
@@ -160,6 +160,8 @@ class Server
 		int		_part(User *user, std::string buff);
 		int		_privmsg(User *user, std::string buff);
 		int		_whois(User *user, std::string buff);
+		int		_topic(User *user, std::string buff);
+		std::pair<std::string, std::string>	_strToPair(std::string buff);
 };
 
 std::string currentTime();
