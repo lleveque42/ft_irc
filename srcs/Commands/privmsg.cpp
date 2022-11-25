@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 16:17:10 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/25 10:22:33 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/25 14:07:48 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ static std::pair<std::string, std::string>	_splitPrivMsg(std::string buff) {
 	size_t i = buff.find(':');
 	if (i == buff.npos)
 		return std::make_pair(std::string(""), std::string(""));
-	// NEED TO TRIM SPACE !!!!!
+	// NEED TO TRIM SPACE !!!!!???
 	std::string first(buff.begin(), buff.begin() + i - 1);
 	std::string second(buff.begin() + i + 1, buff.end());
 	return std::make_pair(std::string(first), std::string(second));
