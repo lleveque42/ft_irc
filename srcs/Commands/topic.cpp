@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 09:54:50 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/25 15:47:26 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/25 15:56:57 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int Server::_topic(User *user, std::string args) {
 		return _sendError(user, ERR_NOSUCHCHANNEL(user->getClient(), user->getNick(), pair.first));
 	Channel *chan = _channels.find(pair.first)->second;
 	if (!chan->getUsers().count(user->getNick()))
-		return _sendError(user, ERR_NOTONCHANNEL(user->getClient(), user->getNick(), pair.first));
+		return _sendError(user, ERR_NOTONCHANNEL(user->getClient(), user->getNick(), pair.first)));
 	if (args.find(':') != args.npos) {
 		if (!user->isOp(chan))
 			_sendError(user, ERR_CHANOPRIVSNEEDED(user->getClient(), user->getNick(), pair.first));

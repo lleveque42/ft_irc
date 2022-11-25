@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/24 15:19:38 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/24 18:10:43 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/25 15:57:36 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ int Server::_part(User *user, std::string buff) {
 		}
 		Channel *chan = _channels.find(*it)->second;
 		if (!chan->getUsers().count(user->getNick())){
-			_sendError(user, ERR_NOTONCHANNEL(user->getClient(), user->getNick(), *it));
+			_sendError(user, ERR_NOTONCHANNEL(user->getClient(), user->getNick(), *it)));
 			continue;
 		}
 		_sendPartMsg(user, chan->getUsers(), *it, reason);
