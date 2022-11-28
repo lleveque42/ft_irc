@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 09:32:47 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/28 10:31:47 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/28 11:14:35 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ void Server::_initCmd() {
 	_cmds["WHOIS"] = &Server::_whois;
 	_cmds["TOPIC"] = &Server::_topic;
 	_cmds["PRIVMSG"] = &Server::_privmsg;
+	_cmds["NOTICE"] = &Server::_notice;
 	_cmds["OPER"] = &Server::_oper;
 	_cmds["WHO"] = &Server::_who;
 }

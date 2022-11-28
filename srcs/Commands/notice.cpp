@@ -1,47 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   privmsg.cpp                                        :+:      :+:    :+:   */
+/*   notice.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/11/22 16:17:10 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/28 11:22:42 by arudy            ###   ########.fr       */
+/*   Created: 2022/11/28 11:13:54 by arudy             #+#    #+#             */
+/*   Updated: 2022/11/28 11:23:35 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/Server.hpp"
 #include "../../includes/User.hpp"
 
-std::pair<std::string, std::string>	Server::_splitPrivMsg(std::string buff) {
-	size_t i = buff.find(':');
-	if (i == buff.npos)
-		return std::make_pair(std::string(""), std::string(""));
-	std::string first(buff.begin(), buff.begin() + i);
-	std::string second(buff.begin() + i + 1, buff.end());
-
-	i = first.find(' ');
-	if (i != first.npos)
-		first.erase(first.begin() + i, first.end());
-	return std::make_pair(std::string(first), std::string(second));
-}
-
-void	Server::_sendPrivMsg(User *sender, User *target, std::string chan_name, std::string msg, std::string cmd_type) {
-	std::string rpl = ":" + sender->getNick() + cmd_type + chan_name + " " + msg + "\r\n";
-	_sendExecuted(target, rpl);
-}
-
-int		Server::_privmsg(User *user, std::string buff) {
+int Server::_notice(User *user, std::string buff) {
 	std::pair<std::string, std::string> recip = _splitPrivMsg(buff);
 	if (recip.first.empty())
-		return _sendError(user, ERR_NORECIPIENT(user->getClient(), user->getNick()));
+		return 1; // 0?
 	if (recip.second.empty())
-		return _sendError(user, ERR_NOTEXTTOSEND(user->getClient(), user->getNick()));
+		return 1; // 0?
 
 	std::map<std::string, User *> targets;
 	if (recip.first[0] == '#') {
 		if (!_channels.count(recip.first))
-			return _sendError(user, ERR_NOSUCHCHANNEL(user->getClient(), user->getNick(), recip.first));
+			return 1;
 		Channel *chan = _channels.find(recip.first)->second;
 		targets = chan->getUsers();
 	}
@@ -54,10 +36,10 @@ int		Server::_privmsg(User *user, std::string buff) {
 			}
 		}
 		if (targets.empty())
-			return _sendError(user, ERR_NOSUCHNICK(user->getClient(), user->getNick(), recip.first));
+			return 1;
 	}
 	for (std::map<std::string, User *>::iterator it = targets.begin(); it != targets.end(); it++)
 		if (it->second != user)
-			_sendPrivMsg(user, it->second, recip.first, recip.second, " PRIVMSG ");
+			_sendPrivMsg(user, it->second, recip.first, recip.second, " NOTICE ");
 	return 0;
 }

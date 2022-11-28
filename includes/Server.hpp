@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/28 10:33:04 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/28 11:23:04 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,6 +140,7 @@ class Server {
 		int		_sendAll(int fd, const char *buf, size_t len, int flags);
 		size_t	_recvAll(pollfd pfd);
 		std::pair<std::string, std::string>	_strToPair(std::string buff);
+		std::pair<std::string, std::string>	_splitPrivMsg(std::string buff);
 		int		_sendError(User *user, std::string msg);
 		int		_sendExecuted(User *user, std::string ret);
 		int		_disconnectUser(User *user, int ret);
@@ -148,7 +149,7 @@ class Server {
 		bool	_validChars(std::string s);
 		bool	_nickAlreadyUsed(User *current, std::string s);
 		void	_sendJoinMsg(User *user, Channel *chan);
-		void	_sendPrivMsg(User *sender, User *tagret, std::string chan_name, std::string msg);
+		void	_sendPrivMsg(User *sender, User *tagret, std::string chan_name, std::string msg, std::string cmd_type);
 		void	_sendPartMsg(User *sender, std::map<std::string, User *> targets, std::string chan_name, std::string msg);
 		int		_checkModes(User *user, Channel *chan, std::string key);
 		int		_applyMode(User *user, std::string mode, bool value);
@@ -162,6 +163,7 @@ class Server {
 		int		_join(User *user, std::string buff);
 		int		_part(User *user, std::string buff);
 		int		_privmsg(User *user, std::string buff);
+		int		_notice(User *user, std::string buff);
 		int		_whois(User *user, std::string buff);
 		int		_who(User *user, std::string buff);
 		int		_topic(User *user, std::string buff);
