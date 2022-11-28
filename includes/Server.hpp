@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
+/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/25 16:57:06 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/28 10:33:04 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,6 +139,7 @@ class Server {
 		int		_manageCmd(pollfd pfd, std::pair<std::string, std::string> cmd);
 		int		_sendAll(int fd, const char *buf, size_t len, int flags);
 		size_t	_recvAll(pollfd pfd);
+		std::pair<std::string, std::string>	_strToPair(std::string buff);
 		int		_sendError(User *user, std::string msg);
 		int		_sendExecuted(User *user, std::string ret);
 		int		_disconnectUser(User *user, int ret);
@@ -150,21 +151,21 @@ class Server {
 		void	_sendPrivMsg(User *sender, User *tagret, std::string chan_name, std::string msg);
 		void	_sendPartMsg(User *sender, std::map<std::string, User *> targets, std::string chan_name, std::string msg);
 		int		_checkModes(User *user, Channel *chan, std::string key);
+		int		_applyMode(User *user, std::string mode, bool value);
+		int		_applyMode(User *user, Channel *channel, std::string buff, bool value);
 		int		_pass(User *user, std::string args);
 		int		_user(User *user, std::string args);
 		int		_nick(User *user, std::string buff);
 		int		_pong(User *user, std::string buff);
 		int		_quit(User *user, std::string args);
-		int		_applyMode(User *user, std::string mode, bool value);
-		int		_applyMode(User *user, Channel *channel, std::string buff, bool value);
 		int		_mode(User *user, std::string buff);
 		int		_join(User *user, std::string buff);
 		int		_part(User *user, std::string buff);
 		int		_privmsg(User *user, std::string buff);
 		int		_whois(User *user, std::string buff);
+		int		_who(User *user, std::string buff);
 		int		_topic(User *user, std::string buff);
 		int		_oper(User *user, std::string buff);
-		std::pair<std::string, std::string>	_strToPair(std::string buff);
 };
 
 std::string currentTime();

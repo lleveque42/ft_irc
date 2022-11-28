@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 09:54:50 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/25 15:56:57 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/28 09:20:53 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,13 +29,9 @@ std::pair<std::string, std::string> Server::_strToPair(std::string buff) {
 }
 
 int Server::_topic(User *user, std::string args) {
-	std::cout << "TOPIC :" << args << "|\n";
 	if (args.empty())
 		return _sendError(user, ERR_NEEDMOREPARAMS(user->getClient(), user->getNick(), "TOPIC"));
 	std::pair<std::string, std::string> pair = _strToPair(args);
-
-	std::cout << "PAIR FIRST |" << pair.first << "|\n";
-	std::cout << "PAIR SECOND |" << pair.second << "|\n";
 
 	if (!_channels.count(pair.first))
 		return _sendError(user, ERR_NOSUCHCHANNEL(user->getClient(), user->getNick(), pair.first));

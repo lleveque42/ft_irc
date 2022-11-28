@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   privmsg.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
+/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 16:17:10 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/25 16:17:20 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/28 09:24:17 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,12 @@ static std::pair<std::string, std::string>	_splitPrivMsg(std::string buff) {
 	size_t i = buff.find(':');
 	if (i == buff.npos)
 		return std::make_pair(std::string(""), std::string(""));
-	// NEED TO TRIM SPACE !!!!!???
-	std::string first(buff.begin(), buff.begin() + i - 1);
+	std::string first(buff.begin(), buff.begin() + i);
 	std::string second(buff.begin() + i + 1, buff.end());
+
+	i = first.find(' ');
+	if (i != first.npos)
+		first.erase(first.begin() + i, first.end());
 	return std::make_pair(std::string(first), std::string(second));
 }
 
@@ -50,19 +53,11 @@ int		Server::_privmsg(User *user, std::string buff) {
 				break;
 			}
 		}
-		if (targets.empty()) {
-			// std::string rpl = ":" + user->getClient() + " PRIVMSG " + recip.first + " " + ERR_NOSUCHNICK(user->getClient(), user->getNick(), recip.first) + "\r\n";
-			// // _sendExecuted(target, rpl);
-			// _sendAll(user->getUserSd(), rpl.c_str(), rpl.length(), 0);
-			// return 1;
-			// _sendError(user, rpl);
+		if (targets.empty())
 			return _sendError(user, ERR_NOSUCHNICK(user->getClient(), user->getNick(), recip.first));
-		}
 	}
-	for (std::map<std::string, User *>::iterator it = targets.begin(); it != targets.end(); it++) {
-		if (it->second != user) { // Check chan mod ??
+	for (std::map<std::string, User *>::iterator it = targets.begin(); it != targets.end(); it++)
+		if (it->second != user)
 			_sendPrivMsg(user, it->second, recip.first, recip.second);
-		}
-	}
 	return 0;
 }
