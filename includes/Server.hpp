@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/29 13:47:46 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/29 15:50:19 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@
 #define ERR_ALREADYREGISTERED(client, nickname, cmd) ":" + std::string(client) + " 462 " + std::string(nickname) + RED " USER: You may not reregister" RESET "\r\n"
 #define ERR_PASSWDMISMATCH(client, nickname) ":" + std::string(client) + " 464 " + std::string(nickname) + RED " Connection refused: Password incorrect" RESET "\r\n"
 #define ERR_CHANNELISFULL(client, nickname, chan_name) (":" + std::string(client) + " 471 " + std::string(nickname) + " " + std::string(chan_name) + " :Cannot join channel (+l)" RESET "\r\n")
+#define ERR_NOPRIVILEGES(client, nickname) (":" + std::string(client) + " 481 " + std::string(nickname) + RED + " :Permission Denied - You're not an IRC operator" RESET "\r\n")
 #define ERR_CHANOPRIVSNEEDED(client, nickname, chan_name) (":" + std::string(client) + " 482 " + std::string(nickname) + RED + " " + std::string(chan_name) + " :You're not a channel operator" RESET "\r\n")
 #define ERR_BADCHANNELKEY(client, nickname, chan_name) (":" + std::string(client) + " 475 " + std::string(nickname) + " " + std::string(chan_name) + " :Cannot join channel (+k)" RESET "\r\n")
 #define ERR_UMODEUNKNOWNFLAG(client, nickname) (":" + std::string(client) + " 501 " + std::string(nickname) + RED " :Uknown MODE flag" RESET "\r\n")
@@ -172,6 +173,7 @@ class Server {
 		int		_who(User *user, std::string buff);
 		int		_topic(User *user, std::string buff);
 		int		_oper(User *user, std::string buff);
+		int		_die(User *user, std::string buff);
 };
 
 std::string currentTime();
