@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 10:30:34 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/29 12:08:27 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/29 13:47:04 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int Server::_who(User *user, std::string buff) {
 				rpl = chan->getName() + " " + it->second->getUserName() + " " + it->second->getHostName() + " irc.serverv " + it->second->getNick() + " H@ :0 " + it->second->getRealName();
 			else
 				rpl = chan->getName() + " " + it->second->getUserName() + " " + it->second->getHostName() + " irc.serverv " + it->second->getNick() + " H :0 " + it->second->getRealName();
-			_sendExecuted(user, RPL_WHOREPLY(user->getClient(), rpl));
+			_sendExecuted(user, RPL_WHOREPLY(user->getClient(), user->getNick(), rpl));
 			rpl.clear();
 		}
 		return _sendExecuted(user, RPL_ENDOFWHO(user->getClient(), user->getNick(), buff));
@@ -44,14 +44,14 @@ int Server::_who(User *user, std::string buff) {
 						rpl = chan->getName() + " " + it->second->getUserName() + " " + it->second->getHostName() + " irc.serverv " + it->second->getNick() + " H@ :0 " + it->second->getRealName();
 					else
 						rpl = chan->getName() + " " + it->second->getUserName() + " " + it->second->getHostName() + " irc.serverv " + it->second->getNick() + " H :0 " + it->second->getRealName();
-					_sendExecuted(user, RPL_WHOREPLY(user->getClient(), rpl));
+					_sendExecuted(user, RPL_WHOREPLY(user->getClient(), user->getNick(), rpl));
 					sent = true;
 					rpl.clear();
 				}
 			}
 			if (!it->second->isInvisible() && !sent) {
 				rpl = "* " + it->second->getUserName() + " " + it->second->getHostName() + " irc.serverv " + it->second->getNick() + " H :0 " + it->second->getRealName();
-				_sendExecuted(user, RPL_WHOREPLY(user->getClient(), rpl));
+				_sendExecuted(user, RPL_WHOREPLY(user->getClient(), user->getNick(), rpl));
 				rpl.clear();
 			}
 			break;
