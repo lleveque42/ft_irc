@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   helper.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
+/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 09:52:20 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/24 12:05:49 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/29 09:37:53 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,4 +73,18 @@ int Server::_acceptConnection(User *user, std::pair<std::string, std::string> cm
 	else
 		return _disconnectUser(user, 2);
 	return 0;
+}
+
+std::pair<std::string, std::string> Server::_strToPair(std::string buff) {
+	size_t i = buff.find(':');
+	if (i == buff.npos)
+		return std::make_pair(buff, std::string(""));
+
+	std::string first(buff.begin(), buff.begin() + i);
+	std::string second(buff.begin() + i + 1, buff.end());
+
+	i = first.find(' ');
+	if (i != first.npos)
+		first.erase(first.begin() + i, first.end());
+	return std::make_pair(std::string(first), std::string(second));
 }

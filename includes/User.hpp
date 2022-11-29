@@ -37,6 +37,7 @@ class User {
 	public:
 		User(int sd);
 		~User();
+		std::map<std::string, Channel *> getJoined() const;
 		int const			&getUserSd() const;
 		std::string const	getClient() const;
 		std::string const	getNick() const;

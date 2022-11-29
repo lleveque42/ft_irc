@@ -23,6 +23,10 @@ int const &User::getUserSd() const {
 	return _user_sd;
 }
 
+std::map<std::string, Channel *> User::getJoined() const {
+	return _joined;
+}
+
 std::string const User::getClient() const {
 	if (getFirstTry())
 		return "";

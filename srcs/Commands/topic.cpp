@@ -6,27 +6,13 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 09:54:50 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/28 09:20:53 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/29 09:37:50 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/Channel.hpp"
 #include "../../includes/Server.hpp"
 #include "../../includes/User.hpp"
-
-std::pair<std::string, std::string> Server::_strToPair(std::string buff) {
-	size_t i = buff.find(':');
-	if (i == buff.npos)
-		return std::make_pair(buff, std::string(""));
-
-	std::string first(buff.begin(), buff.begin() + i);
-	std::string second(buff.begin() + i + 1, buff.end());
-
-	i = first.find(' ');
-	if (i != first.npos)
-		first.erase(first.begin() + i, first.end());
-	return std::make_pair(std::string(first), std::string(second));
-}
 
 int Server::_topic(User *user, std::string args) {
 	if (args.empty())
