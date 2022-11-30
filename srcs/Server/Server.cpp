@@ -16,6 +16,8 @@
 #endif
 #include "../../includes/Server.hpp"
 
+extern bool stop;
+
 Server::Server(char *port, char *password) : _creation_time(currentTime()),
  _password(password), _port(port), _pfds(), _fd_count(0), _op_name("ircadmin"),
  _op_password("ircpassword") {
@@ -167,6 +169,10 @@ int Server::_manageRequest(pollfd pfd) {
 				break;
 			else if (status == 3)
 				_sendError(_users[pfd.fd], ERR_UNKNOWNCOMMAND(_users[pfd.fd]->getClient(), _users[pfd.fd]->getNick(), _recvs[i].first));
+			else if (status == 4) {
+				stop = true;
+				break;
+			}
 		}
 	}
 	return 0;
@@ -187,7 +193,7 @@ int Server::_fillRecvs(std::string buff) {
 		space = begin + space_pos;
 		backr = begin + backr_pos;
 		if (space_pos == buff.npos)
-			_recvs.push_back(std::make_pair(std::string(begin, buff.end() - 1), std::string()));
+			_recvs.push_back(std::make_pair(std::string(begin, buff.end() - 2), std::string()));
 		else {
 			if (backr_pos == buff.npos)
 				_recvs.push_back(std::make_pair(std::string(begin, space), std::string(space + 1, buff.end() - 1)));
