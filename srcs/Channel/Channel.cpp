@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 15:25:06 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/25 14:44:12 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/30 10:40:00 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,11 @@ std::string Channel::getModes() {
 		ret += "l";
 	if (_key.first)
 		ret += (" " + _key.second);
-	if (_limited.first)
-		ret +=  (" " + _limited.second);
+	if (_limited.first) {
+		std::stringstream ss;
+		ss << " " << _limited.second;
+		ret += ss.str();
+	}
 	return ret;
 }
 

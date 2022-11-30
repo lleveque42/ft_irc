@@ -10,6 +10,10 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#define MAC
+#ifdef MAC
+#include <unistd.h>
+#endif
 #include "../../includes/Server.hpp"
 
 Server::Server(char *port, char *password) : _creation_time(currentTime()),

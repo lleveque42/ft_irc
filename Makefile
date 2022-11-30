@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: arudy <arudy@student.42.fr>                +#+  +:+       +#+         #
+#    By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/16 08:42:57 by arudy             #+#    #+#              #
-#    Updated: 2022/11/29 15:40:49 by arudy            ###   ########.fr        #
+#    Updated: 2022/11/30 10:48:20 by lleveque         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,7 +29,7 @@ RM		= rm -rf
 
 MKDIR	= mkdir -p
 
-CFLAGS	= -Wall -Werror -Wextra -pedantic -std=c++98
+CFLAGS	= -Wall -Werror -Wextra -pedantic -fsanitize=address -std=c++98
 
 all: $(NAME)
 
