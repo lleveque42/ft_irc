@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/30 15:59:07 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/30 17:52:30 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,10 +60,8 @@
 #define RPL_CHANNELMODEIS(client, nickname, chan_name, modes) (":" + std::string(client) + " 324 " + std::string(nickname) + " " + std::string(chan_name) + " +" + std::string(modes) + "\r\n")
 #define RPL_NOTOPIC(client, nickname, chan_name) (":" + std::string(client) +" 331 " + std::string(nickname) + " " + std::string(chan_name) + " :No topic is set\r\n")
 #define RPL_TOPIC(client, nickname, chan_name, topic) (":" + std::string(client) +" 332 " + std::string(nickname) + " " + std::string(chan_name) + " :" + std::string(topic) + "\r\n")
-
 #define RPL_WHOREPLY(client, nickname, msg) (":" + std::string(client) + " 352 " + std::string(nickname) + " " + std::string(msg) + "\r\n")
 #define RPL_ENDOFWHO(client, nickname, mask) (":" + std::string(client) + " 315 " + std::string(nickname) + " " + std::string(mask) + " :End of WHO list\r\n")
-
 #define RPL_NAMEREPLY(client, nickname, chan_name, usernames) (":" + std::string(client) +" 353 " + std::string(nickname) + " = " + std::string(chan_name) + " :" + std::string(usernames) + "\r\n")
 #define RPL_ENDOFNAMES(client, nickname, chan_name) (":" + std::string(client) +" 366 " + std::string(nickname) + " " + std::string(chan_name) + " :End of /NAMES list\r\n")
 #define RPL_YOUREOPER(client, nickname) (":" + std::string(client) +" 381 " + std::string(nickname) + " :You are now an IRC Operator\r\n")
@@ -174,6 +172,7 @@ class Server {
 		int		_topic(User *user, std::string buff);
 		int		_oper(User *user, std::string buff);
 		int		_die(User *user, std::string buff);
+		int		_kill(User *user, std::string buff);
 };
 
 std::string currentTime();

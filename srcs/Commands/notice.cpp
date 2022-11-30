@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 11:13:54 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/28 11:23:35 by arudy            ###   ########.fr       */
+/*   Updated: 2022/11/30 18:31:32 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,9 @@
 int Server::_notice(User *user, std::string buff) {
 	std::pair<std::string, std::string> recip = _splitPrivMsg(buff);
 	if (recip.first.empty())
-		return 1; // 0?
+		return 1;
 	if (recip.second.empty())
-		return 1; // 0?
+		return 1;
 
 	std::map<std::string, User *> targets;
 	if (recip.first[0] == '#') {
