@@ -150,10 +150,10 @@ void User::removeFromAll() {
 	if (!_joined.size())
 		return;
 
-	for (std::map<std::string, Channel *>::iterator it = _joined.begin(); it != _joined.end(); it++) {
-		it->second->removeUser(this);
-		if (!_joined.size())
-			break;
-	}
+	std::vector<std::string> vec;
+	for (std::map<std::string, Channel *>::iterator it = _joined.begin(); it != _joined.end(); it++)
+		vec.push_back(it->first);
+	for (std::vector<std::string>::iterator it = vec.begin(); it != vec.end(); it++)
+		_joined[*it]->removeUser(this);
 }
 
