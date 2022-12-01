@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mode.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
+/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 13:15:43 by arudy             #+#    #+#             */
-/*   Updated: 2022/12/01 10:26:32 by arudy            ###   ########.fr       */
+/*   Updated: 2022/12/01 16:28:07 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,17 @@ int Server::_applyMode(User *user, Channel *channel, std::string buff, bool valu
 				continue;
 			}
 			channel->setKey(value, it->second);
+		}
+		else if (it->first == 'o') {
+			if (value && it->second.empty()) {
+				_sendError(user, ERR_NEEDMOREPARAMS(user->getClient(), user->getNick(), "MODE"));
+				continue;
+			}
+			if (!channel->getUsers().count(it->second)) {
+				_sendError(user, ERR_NOSUCHNICK(user->getClient(), user->getNick(), it->second));
+				continue;
+			}
+			channel->addToOp(channel->getUsers().find(it->second)->second);
 		}
 		else
 			_sendError(user, ERR_UMODEUNKNOWNFLAG(user->getClient(), user->getNick()));

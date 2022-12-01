@@ -129,7 +129,6 @@ void User::setInvisible(bool value) {
 	_invisible = value;
 }
 
-
 void User::addChannel(Channel *channel) {
 	_joined.insert(std::make_pair(channel->getName(), channel));
 }
