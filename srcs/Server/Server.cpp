@@ -39,7 +39,6 @@ void Server::clear() {
 }
 
 Server::~Server() {
-
 	clear();
 }
 
@@ -141,6 +140,7 @@ int Server::_disconnectUser(User *user, int ret) {
 	for (it = _pfds.begin() + 1; it->fd != user->getUserSd(); it++)
 		;
 	user->removeFromAll();
+	_delEmptyChans();
 	_pfds.erase(it);
 	_users.erase(user->getUserSd());
 	_recvs.clear();

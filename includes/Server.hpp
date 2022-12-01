@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/30 17:52:30 by arudy            ###   ########.fr       */
+/*   Updated: 2022/12/01 18:23:06 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,6 +154,8 @@ class Server {
 		void	_sendJoinMsg(User *user, Channel *chan);
 		void	_sendPrivMsg(User *sender, User *tagret, std::string chan_name, std::string msg, std::string cmd_type);
 		void	_sendPartMsg(User *sender, std::map<std::string, User *> targets, std::string chan_name, std::string msg);
+		void	_updateNickOnChans(std::string old_nick, User *user);
+		void	_delEmptyChans();
 		int		_checkModes(User *user, Channel *chan, std::string key);
 		int		_applyMode(User *user, std::string mode, bool value);
 		int		_applyMode(User *user, Channel *channel, std::string buff, bool value);

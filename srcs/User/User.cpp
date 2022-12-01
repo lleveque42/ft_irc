@@ -137,7 +137,7 @@ void User::addOps(Channel *channel) {
 	_ops.insert(std::make_pair(channel->getName(), channel));
 }
 
-void User::removeChannel(Channel *channel) {
+void User::removeFromChannel(Channel *channel) {
 	_joined.erase(channel->getName());
 }
 

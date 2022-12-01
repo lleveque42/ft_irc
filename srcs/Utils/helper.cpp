@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 09:52:20 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/29 09:37:53 by arudy            ###   ########.fr       */
+/*   Updated: 2022/12/01 18:44:56 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,4 +87,20 @@ std::pair<std::string, std::string> Server::_strToPair(std::string buff) {
 	if (i != first.npos)
 		first.erase(first.begin() + i, first.end());
 	return std::make_pair(std::string(first), std::string(second));
+}
+
+void	Server::_delEmptyChans() {
+	std::map<std::string, Channel *>::iterator it = _channels.begin();
+	std::map<std::string, Channel *>::iterator to_del;
+	for(; it != _channels.end();) {
+		if (it->second->getUsers().empty()) {
+			to_del = it;
+			it++;
+			delete to_del->second;
+			_channels.erase(to_del);
+		}
+		else
+			it++;
+	}
+
 }

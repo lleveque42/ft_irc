@@ -64,7 +64,7 @@ class User {
 		void				setInvisible(bool value);
 		void				addChannel(Channel *channel);
 		void				addOps(Channel *channel);
-		void				removeChannel(Channel *channel);
+		void				removeFromChannel(Channel *channel);
 		void				removeOps(Channel *channel);
 		void				removeFromAll();
 };

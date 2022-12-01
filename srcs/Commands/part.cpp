@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/24 15:19:38 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/25 15:57:36 by arudy            ###   ########.fr       */
+/*   Updated: 2022/12/01 18:52:08 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,8 @@ int Server::_part(User *user, std::string buff) {
 		}
 		_sendPartMsg(user, chan->getUsers(), *it, reason);
 		chan->removeUser(user);
-		if (chan->getUsersList().empty()) {
+		if (chan->getUsers().empty()) {
+			std::cout << "Del chan\n";
 			std::map<std::string, Channel *>::iterator to_del = _channels.find(chan->getName());
 			delete to_del->second;
 			_channels.erase(to_del);
