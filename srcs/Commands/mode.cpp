@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mode.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
+/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 13:15:43 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/24 13:12:30 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/12/01 10:26:32 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ int Server::_applyMode(User *user, Channel *channel, std::string buff, bool valu
 }
 
 int	Server::_mode(User *user, std::string buff) {
-	bool value;
+	bool value = false;
 	size_t delimiter;
 	std::string mode;
 	std::string target;

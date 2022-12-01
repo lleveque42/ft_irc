@@ -52,7 +52,7 @@ std::string const &User::getRealName() const {
 }
 
 std::string User::getModes() {
-	std::string ret;
+	std::string ret = "";
 
 	if (_invisible)
 		ret += "i";
