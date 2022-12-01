@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
+/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 15:25:06 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/30 10:40:00 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/12/01 20:09:47 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ _key(false, std::string()), _topic(false, std::string()) {
 }
 
 Channel::~Channel(){
+	_users.clear();
+	_opers.clear();
 }
 
 std::string const &Channel::getName() const {
@@ -32,7 +34,12 @@ void Channel::removeUser(User *user) {
 	if (user->isOp(this))
 		user->removeOps(this);
 	_users.erase(user->getNick());
-	user->removeChannel(this);
+	user->removeFromChannel(this);
+}
+
+void	Channel::removeByNick(std::string nick) {
+	if (_users.count(nick))
+		_users.erase(nick);
 }
 
 std::string	Channel::getUsersList() {
@@ -74,6 +81,12 @@ std::map<std::string, User *> Channel::getUsers() const {
 	return _users;
 }
 
+
+std::map<std::string, User *> Channel::getOpers() const {
+	return _opers;
+}
+
+
 std::pair<bool, size_t> Channel::getLimited() const {
 	return _limited;
 }
@@ -95,6 +108,12 @@ void Channel::removeFromOp(User *user) {
 	_opers.erase(user->getNick());
 	user->removeOps(this);
 }
+
+void Channel::removeFromOpByNick(std::string nick) {
+	if (_opers.count(nick))
+		_opers.erase(nick);
+}
+
 
 void Channel::setLimited(bool value, size_t n) {
 	_limited.first = value;

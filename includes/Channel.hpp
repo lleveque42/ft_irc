@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 15:26:42 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/24 18:14:26 by arudy            ###   ########.fr       */
+/*   Updated: 2022/12/01 20:09:01 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,15 +33,18 @@ class Channel {
 		std::string const &getName() const;
 		void addUser(User *user);
 		void removeUser(User *user);
+		void removeByNick(std::string nick);
 		bool isOp(User *user);
 		std::string getUsersList();
 		std::string getModes();
 		std::map<std::string, User *> getUsers() const;
+		std::map<std::string, User *> getOpers() const;
 		std::pair<bool, size_t> getLimited() const;
 		std::pair<bool, std::string> getKey() const;
 		std::pair<bool, std::string> getTopic() const;
 		void addToOp(User *user);
 		void removeFromOp(User *user);
+		void removeFromOpByNick(std::string nick);
 		void setLimited(bool value, size_t n);
 		void setKey(bool value, std::string key);
 		void setTopic(bool value, std::string topic);

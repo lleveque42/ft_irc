@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mode.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
+/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 13:15:43 by arudy             #+#    #+#             */
-/*   Updated: 2022/12/01 16:28:07 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/12/01 16:36:59 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,6 +119,8 @@ int	Server::_mode(User *user, std::string buff) {
 	if (!mode.empty()) {
 		if (mode[0] == '+')
 			value = true;
+		if (mode[0] != '+' && mode[0] != '-')
+			return _sendError(user, ERR_UMODEUNKNOWNFLAG(user->getClient(), user->getNick()));
 		mode.erase(mode.begin());
 	}
 	if (target[0] != '#') {

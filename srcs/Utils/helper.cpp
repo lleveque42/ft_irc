@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 09:52:20 by arudy             #+#    #+#             */
-/*   Updated: 2022/12/01 18:44:56 by arudy            ###   ########.fr       */
+/*   Updated: 2022/12/01 19:22:18 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,11 +96,11 @@ void	Server::_delEmptyChans() {
 		if (it->second->getUsers().empty()) {
 			to_del = it;
 			it++;
+			// to_del->second->getOpers().clear();
 			delete to_del->second;
 			_channels.erase(to_del);
 		}
 		else
 			it++;
 	}
-
 }
