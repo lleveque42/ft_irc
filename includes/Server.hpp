@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
+/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/12/01 18:23:06 by arudy            ###   ########.fr       */
+/*   Updated: 2022/12/02 14:20:20 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,9 @@
 #include <utility>
 #include <poll.h>
 #include <algorithm>
-#include "../includes/Exception.hpp"
-#include "../includes/Channel.hpp"
-#include "../includes/User.hpp"
+#include "Exception.hpp"
+#include "Channel.hpp"
+#include "User.hpp"
 
 #define BUFFER_SIZE 4096
 #define BOLD "\033[1m"
@@ -58,6 +58,7 @@
 #define RPL_UMODEIS(client, nickname, modes) (":" + std::string(client) + " 221 " + std::string(nickname) + " +" + modes + "\r\n")
 #define RPL_WHOISUSER(client, nickuser, nickname, username, hostname, realname) (":" + std::string(client) + " 311 " + std::string(nickuser) + " " + std::string(nickname) + " " + std::string(username) + " " + std::string(hostname) + " * :" +std::string(realname) + "\r\n")
 #define RPL_CHANNELMODEIS(client, nickname, chan_name, modes) (":" + std::string(client) + " 324 " + std::string(nickname) + " " + std::string(chan_name) + " +" + std::string(modes) + "\r\n")
+#define RPL_CHANNELMODEIS2(client, nickname, chan_name, modes, target) (":" + std::string(client) + " 324 " + std::string(nickname) + " " + std::string(chan_name) + " +" + std::string(modes) + " " + std::string(target) + "\r\n")
 #define RPL_NOTOPIC(client, nickname, chan_name) (":" + std::string(client) +" 331 " + std::string(nickname) + " " + std::string(chan_name) + " :No topic is set\r\n")
 #define RPL_TOPIC(client, nickname, chan_name, topic) (":" + std::string(client) +" 332 " + std::string(nickname) + " " + std::string(chan_name) + " :" + std::string(topic) + "\r\n")
 #define RPL_WHOREPLY(client, nickname, msg) (":" + std::string(client) + " 352 " + std::string(nickname) + " " + std::string(msg) + "\r\n")
@@ -81,17 +82,20 @@
 #define ERR_NONICKNAMEGIVEN(client, nickname) ":" + std::string(client) + " 431 " + std::string(nickname) + RED " NICK :No nickname provided" RESET "\r\n"
 #define ERR_ERRONEUSNICKNAME(client, nickname) ":" + std::string(client) + " 432 " + std::string(nickname) + RED " NICK :Erroneus nickname" RESET "\r\n"
 #define ERR_NICKNAMEINUSE(client, nickname) ":" + std::string(client) + " 433 " + std::string(nickname) + RED " NICK :Nickname is already in use" RESET "\r\n"
+#define ERR_USERNOTINCHANNEL(client, nickname, target, channel) ":" + std::string(client) + " 441 " + std::string(nickname) + " " + std::string(target) + " " + std::string(channel) + RED " :They aren't on that channel" RESET "\r\n"
 #define ERR_NOTONCHANNEL(client, nickname, chan_name) (":" + std::string(client) + " 442 " + std::string(nickname) + RED + " " + std::string(chan_name) + " :You're not on channel" RESET "\r\n"
 #define ERR_NEEDMOREPARAMS(client, nickname, cmd) (":" + std::string(client) + " 461 " + std::string(nickname) + RED + " " + std::string(cmd) + " :Not enough parameters" RESET "\r\n")
 #define ERR_NOPREFIX(client, nickname, cmd) (":" + std::string(client) + " 461 " + std::string(nickname) + RED + " " + std::string(cmd) + " :No prefix before last param" RESET "\r\n")
 #define ERR_ALREADYREGISTERED(client, nickname, cmd) ":" + std::string(client) + " 462 " + std::string(nickname) + RED " USER: You may not reregister" RESET "\r\n"
 #define ERR_PASSWDMISMATCH(client, nickname) ":" + std::string(client) + " 464 " + std::string(nickname) + RED " Connection refused: Password incorrect" RESET "\r\n"
+#define ERR_KEYSET(client, nickname, channel) ":" + std::string(client) + " 467 " + std::string(nickname) + " " + std::string(channel) + RED " :Channel key already set" RESET "\r\n"
 #define ERR_CHANNELISFULL(client, nickname, chan_name) (":" + std::string(client) + " 471 " + std::string(nickname) + " " + std::string(chan_name) + " :Cannot join channel (+l)" RESET "\r\n")
+#define ERR_UNKNOWNMODE(client, nickname, mode, channel) ":" + std::string(client) + " 472 " + std::string(nickname) + " " + std::string(mode) + RED " :is unknown mode char to me for " + std::string(channel) + RESET "\r\n"
 #define ERR_NOPRIVILEGES(client, nickname) (":" + std::string(client) + " 481 " + std::string(nickname) + RED + " :Permission Denied - You're not an IRC operator" RESET "\r\n")
 #define ERR_CHANOPRIVSNEEDED(client, nickname, chan_name) (":" + std::string(client) + " 482 " + std::string(nickname) + RED + " " + std::string(chan_name) + " :You're not a channel operator" RESET "\r\n")
 #define ERR_BADCHANNELKEY(client, nickname, chan_name) (":" + std::string(client) + " 475 " + std::string(nickname) + " " + std::string(chan_name) + " :Cannot join channel (+k)" RESET "\r\n")
 #define ERR_UMODEUNKNOWNFLAG(client, nickname) (":" + std::string(client) + " 501 " + std::string(nickname) + RED " :Uknown MODE flag" RESET "\r\n")
-#define ERR_USERSDONTMATCH(client, nickname) (":" + std::string(client) + " 502 "  + std::string(nickname) + RED " :Cant change mode for other users" RESET "\r\n")
+#define ERR_USERSDONTMATCH(client, nickname) (":" + std::string(client) + " 502 "  + std::string(nickname) + RED " :Can't change mode for other users" RESET "\r\n")
 
 #define DIS_CREATED(date) (ORANGE BOLD "[ircserv]" RESET BOLD " created " + std::string(date) + RESET)
 #define DIS_WAITCONNEC ORANGE BOLD "[ircserv]" RESET BOLD " waiting for incoming connections... 😴" RESET

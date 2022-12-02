@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mode.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
+/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 13:15:43 by arudy             #+#    #+#             */
-/*   Updated: 2022/12/01 16:36:59 by arudy            ###   ########.fr       */
+/*   Updated: 2022/12/02 14:22:49 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,10 @@ int Server::_applyMode(User *user, Channel *channel, std::string buff, bool valu
 				_sendError(user, ERR_NEEDMOREPARAMS(user->getClient(), user->getNick(), "MODE"));
 				continue;
 			}
+			if (channel->getKey().first) {
+				_sendError(user, ERR_KEYSET(user->getClient(), user->getNick(), channel->getName()));
+				continue;
+			}
 			channel->setKey(value, it->second);
 		}
 		else if (it->first == 'o') {
@@ -88,13 +92,18 @@ int Server::_applyMode(User *user, Channel *channel, std::string buff, bool valu
 				continue;
 			}
 			if (!channel->getUsers().count(it->second)) {
-				_sendError(user, ERR_NOSUCHNICK(user->getClient(), user->getNick(), it->second));
+				_sendError(user, ERR_USERNOTINCHANNEL(user->getClient(), user->getNick(), it->second, channel->getName()));
+				continue;
+			}
+			if (!value) {
+				_sendError(user, ERR_USERSDONTMATCH(user->getClient(), user->getNick()));
 				continue;
 			}
 			channel->addToOp(channel->getUsers().find(it->second)->second);
+			_sendExecuted(user, RPL_CHANNELMODEIS2(user->getClient(), user->getNick(), channel->getName(), "o", it->second));
 		}
 		else
-			_sendError(user, ERR_UMODEUNKNOWNFLAG(user->getClient(), user->getNick()));
+			_sendError(user, ERR_UNKNOWNMODE(user->getClient(), user->getNick(), std::string(1, it->first), channel->getName()));
 	}
 	return 0;
 }

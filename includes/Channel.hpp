@@ -3,18 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
+/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 15:26:42 by arudy             #+#    #+#             */
-/*   Updated: 2022/12/01 20:09:01 by arudy            ###   ########.fr       */
+/*   Updated: 2022/12/02 13:13:43 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "../includes/Exception.hpp"
-#include "../includes/Server.hpp"
-#include "../includes/User.hpp"
+#include "Exception.hpp"
+#include "Server.hpp"
+#include "User.hpp"
 
 class User;
 
