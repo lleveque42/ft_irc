@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   oper.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
+/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 14:14:03 by lleveque          #+#    #+#             */
-/*   Updated: 2022/11/25 14:45:13 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/12/02 16:48:26 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,5 +26,5 @@ int Server::_oper(User *user, std::string buff) {
 		return _sendError(user, ERR_PASSWDMISMATCH(user->getClient(), user->getNick()));
 	user->setOp(1);
 	_sendExecuted(user, RPL_YOUREOPER(user->getClient(), user->getNick()));
-	return _mode(user, user->getNick());
+	return _sendExecuted(user, RPL_UMODEIS(user->getClient(), user->getNick(), user->getModes()));
 }
