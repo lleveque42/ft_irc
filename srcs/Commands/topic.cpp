@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   topic.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
+/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 09:54:50 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/29 09:37:50 by arudy            ###   ########.fr       */
+/*   Updated: 2022/12/05 12:18:18 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int Server::_topic(User *user, std::string args) {
 		chan->setTopic(true, pair.second);
 		std::map<std::string, User *> targets = chan->getUsers();
 		for (std::map<std::string, User *>::iterator it = targets.begin(); it != targets.end(); it++) {
-			std::string rpl = ":" + it->second->getClient() + " TOPIC " + pair.first + " :" + pair.second + "\r\n";
+			std::string rpl = ":" + user->getClient() + " TOPIC " + pair.first + " :" + pair.second + "\r\n";
 			_sendExecuted(it->second, rpl);
 		}
 		return 0;
