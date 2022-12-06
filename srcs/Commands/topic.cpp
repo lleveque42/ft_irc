@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   topic.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
+/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 09:54:50 by arudy             #+#    #+#             */
-/*   Updated: 2022/12/05 12:18:18 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/12/06 13:11:22 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int Server::_topic(User *user, std::string args) {
 		return _sendError(user, ERR_NOTONCHANNEL(user->getClient(), user->getNick(), pair.first)));
 	if (args.find(':') != args.npos) {
 		if (!user->isOp(chan))
-			_sendError(user, ERR_CHANOPRIVSNEEDED(user->getClient(), user->getNick(), pair.first));
+			return _sendError(user, ERR_CHANOPRIVSNEEDED(user->getClient(), user->getNick(), pair.first));
 		chan->setTopic(true, pair.second);
 		std::map<std::string, User *> targets = chan->getUsers();
 		for (std::map<std::string, User *>::iterator it = targets.begin(); it != targets.end(); it++) {
