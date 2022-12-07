@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/12/07 16:22:52 by arudy            ###   ########.fr       */
+/*   Updated: 2022/12/07 16:35:01 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,9 +66,9 @@
 #define RPL_ENDOFWHO(client, nickname, mask) (":" + std::string(client) + " 315 " + std::string(nickname) + " " + std::string(mask) + " :End of WHO list\r\n")
 #define RPL_NAMEREPLY(client, nickname, chan_name, usernames) (":" + std::string(client) +" 353 " + std::string(nickname) + " = " + std::string(chan_name) + " :" + std::string(usernames) + "\r\n")
 #define RPL_ENDOFNAMES(client, nickname, chan_name) (":" + std::string(client) +" 366 " + std::string(nickname) + " " + std::string(chan_name) + " :End of /NAMES list\r\n")
-#define RPL_YOUREOPER(client, nickname) (":" + std::string(client) +" 381 " + std::string(nickname) + " :You are now an IRC Operator\r\n")
-#define RPL_PARTMSG(client, nickname, chan_name, msg) (":" + std::string(client) + std::string(nickname) + " PART " + std::string(chan_name) + " :" + msg + "\r\n")
-#define RPL_PARTNOMSG(client, nickname, chan_name) (":" + std::string(client) + std::string(nickname) + " PART " + std::string(chan_name) + " :" + "\r\n")
+#define RPL_YOUREOPER(client, nickname) (":" + std::string(client) + " 381 " + std::string(nickname) + " :You are now an IRC Operator\r\n")
+#define RPL_PARTMSG(client, nickname, chan_name, msg) (":" + std::string(client) + " PART " + std::string(chan_name) + " :" + msg + "\r\n")
+#define RPL_PARTNOMSG(client, nickname, chan_name) (":" + std::string(client) + " PART " + std::string(chan_name) + " :" + "\r\n")
 
 #define ERR_NOCAP ":irc.server 400 : " RED " Connection refused: No cap provided" RESET "\r\n"
 #define ERR_NOPASS ":irc.server 400 : " RED " Connection refused: No password provided" RESET "\r\n"
