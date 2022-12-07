@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/12/07 17:23:04 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/12/07 17:25:22 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,7 @@
 #define ERR_NICKNAMEINUSE(client, nickname) ":" + std::string(client) + " 433 " + std::string(nickname) + RED " NICK :Nickname is already in use" RESET "\r\n"
 #define ERR_USERNOTINCHANNEL(client, nickname, target, channel) ":" + std::string(client) + " 441 " + std::string(nickname) + " " + std::string(target) + " " + std::string(channel) + RED " :They aren't on that channel" RESET "\r\n"
 #define ERR_NOTONCHANNEL(client, nickname, chan_name) (":" + std::string(client) + " 442 " + std::string(nickname) + RED + " " + std::string(chan_name) + " :You're not on channel" RESET "\r\n"
+#define ERR_USERONCHANNEL(client, nickname, chan_name) (":" + std::string(client) + " 443 " + std::string(nickname) + RED + " " + std::string(chan_name) + " :is already on channel" RESET "\r\n"
 #define ERR_NEEDMOREPARAMS(client, nickname, cmd) (":" + std::string(client) + " 461 " + std::string(nickname) + RED + " " + std::string(cmd) + " :Not enough parameters" RESET "\r\n")
 #define ERR_NOPREFIX(client, nickname, cmd) (":" + std::string(client) + " 461 " + std::string(nickname) + RED + " " + std::string(cmd) + " :No prefix before last param" RESET "\r\n")
 #define ERR_ALREADYREGISTERED(client, nickname, cmd) ":" + std::string(client) + " 462 " + std::string(nickname) + RED " USER: You may not reregister" RESET "\r\n"
@@ -180,6 +181,7 @@ class Server {
 		int		_whois(User *user, std::string buff);
 		int		_who(User *user, std::string buff);
 		int		_kick(User *user, std::string buff);
+		int		_invite(User *user, std::string buff);
 		int		_topic(User *user, std::string buff);
 		int		_oper(User *user, std::string buff);
 		int		_die(User *user, std::string buff);
