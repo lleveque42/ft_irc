@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/24 15:19:38 by arudy             #+#    #+#             */
-/*   Updated: 2022/12/01 19:16:03 by arudy            ###   ########.fr       */
+/*   Updated: 2022/12/07 12:26:00 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "../../includes/User.hpp"
 #include "../../includes/Channel.hpp"
 
-static std::string getReason(std::string &buff) {
+std::string Server::_getReason(std::string &buff) {
 	std::string ret = "";
 	size_t i = buff.find(':');
 
@@ -46,7 +46,7 @@ void	Server::_sendPartMsg(User *sender, std::map<std::string, User *> targets, s
 }
 
 int Server::_part(User *user, std::string buff) {
-	std::string reason = getReason(buff);
+	std::string reason = _getReason(buff);
 	std::vector<std::string> chans = _strToVec(buff);
 
 	for (std::vector<std::string>::iterator it = chans.begin(); it != chans.end(); it++) {

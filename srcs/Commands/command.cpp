@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 09:32:47 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/30 16:43:38 by arudy            ###   ########.fr       */
+/*   Updated: 2022/12/07 12:20:43 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ void Server::_initCmd() {
 	_cmds["NOTICE"] = &Server::_notice;
 	_cmds["OPER"] = &Server::_oper;
 	_cmds["WHO"] = &Server::_who;
+	_cmds["KICK"] = &Server::_kick;
 	_cmds["kill"] = &Server::_kill;
 	_cmds["die"] = &Server::_die;
 }

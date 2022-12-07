@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
+/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/12/02 14:20:20 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/12/07 15:22:52 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,13 +53,14 @@
 #define RPL_PASS ": " GREEN "Connection accepted !\n" BOLD ORANGE "Welcome to our IRC server !\033[00m\r\n"
 #define RPL_PASSSEND "Connection accepted: Password correct"
 #define RPL_NICK(old_nick, nickname) (":" + std::string(old_nick) + " NICK " + std::string(nickname) + "\r\n")
-#define RPL_QUIT(nickname, hostname, reason) (":" + std::string(nickname) + " QUIT :" + std::string(reason) + "\r\n")
+#define RPL_QUIT(client, reason) (":" + std::string(client) + " QUIT :" + std::string(reason) + "\r\n")
 #define RPL_JOIN(client, chan_name) (":" + std::string(client) + " JOIN :" + std::string(chan_name) + "\r\n")
 #define RPL_UMODEIS(client, nickname, modes) (":" + std::string(client) + " 221 " + std::string(nickname) + " +" + modes + "\r\n")
 #define RPL_WHOISUSER(client, nickuser, nickname, username, hostname, realname) (":" + std::string(client) + " 311 " + std::string(nickuser) + " " + std::string(nickname) + " " + std::string(username) + " " + std::string(hostname) + " * :" +std::string(realname) + "\r\n")
 #define RPL_CHANNELMODEIS(client, nickname, chan_name, modes) (":" + std::string(client) + " 324 " + std::string(nickname) + " " + std::string(chan_name) + " +" + std::string(modes) + "\r\n")
 #define RPL_CHANNELMODEIS2(client, nickname, chan_name, modes, target) (":" + std::string(client) + " 324 " + std::string(nickname) + " " + std::string(chan_name) + " +" + std::string(modes) + " " + std::string(target) + "\r\n")
 #define RPL_NOTOPIC(client, nickname, chan_name) (":" + std::string(client) +" 331 " + std::string(nickname) + " " + std::string(chan_name) + " :No topic is set\r\n")
+#define RPL_KICK(client, nickname, chan_name, to_kick, reason)(":" + std::string(client) + " KICK " + std::string(chan_name) + " " + std::string(to_kick) + " :" + std::string(reason) + "\r\n")
 #define RPL_TOPIC(client, nickname, chan_name, topic) (":" + std::string(client) +" 332 " + std::string(nickname) + " " + std::string(chan_name) + " :" + std::string(topic) + "\r\n")
 #define RPL_WHOREPLY(client, nickname, msg) (":" + std::string(client) + " 352 " + std::string(nickname) + " " + std::string(msg) + "\r\n")
 #define RPL_ENDOFWHO(client, nickname, mask) (":" + std::string(client) + " 315 " + std::string(nickname) + " " + std::string(mask) + " :End of WHO list\r\n")
@@ -69,10 +70,10 @@
 #define RPL_PARTMSG(client, nickname, chan_name, msg) (":" + std::string(client) + std::string(nickname) + " PART " + std::string(chan_name) + " :" + msg + "\r\n")
 #define RPL_PARTNOMSG(client, nickname, chan_name) (":" + std::string(client) + std::string(nickname) + " PART " + std::string(chan_name) + " :" + "\r\n")
 
-#define ERR_NOCAP ":irc.server 400 " RED "Connection refused: No cap provided" RESET "\r\n"
-#define ERR_NOPASS ":irc.server 400 " RED "Connection refused: No password provided" RESET "\r\n"
-#define ERR_NONICK ":irc.server 400 " RED "Connection refused: No nickname provided, registration not completed" RESET "\r\n"
-#define ERR_NOUSER ":irc.server 400 " RED "Connection refused: No user informations provided, registration not completed" RESET "\r\n"
+#define ERR_NOCAP ":irc.server 400 : " RED " Connection refused: No cap provided" RESET "\r\n"
+#define ERR_NOPASS ":irc.server 400 : " RED " Connection refused: No password provided" RESET "\r\n"
+#define ERR_NONICK ":irc.server 400 : " RED " Connection refused: No nickname provided, registration not completed" RESET "\r\n"
+#define ERR_NOUSER ":irc.server 400 : " RED " Connection refused: No user informations provided, registration not completed" RESET "\r\n"
 #define ERR_NOSUCHNICK(client, nickname, target) (":" + std::string(client) +  " 401 " + std::string(nickname) + RED " " + std::string(target) + RESET "\r\n")
 #define ERR_NOSUCHCHANNEL(client, nickname, chan_name) (":" + std::string(client) + " 403 " + std::string(nickname) + RED + " " + std::string(chan_name) + " :No such channel" RESET "\r\n")
 #define ERR_CANNOTSENDTOCHAN(client, nickname, target) (":" + std::string(client) + " 404 " RED + std::string(target) + " :Cannot send to channel" RESET "\r\n")
@@ -87,7 +88,7 @@
 #define ERR_NEEDMOREPARAMS(client, nickname, cmd) (":" + std::string(client) + " 461 " + std::string(nickname) + RED + " " + std::string(cmd) + " :Not enough parameters" RESET "\r\n")
 #define ERR_NOPREFIX(client, nickname, cmd) (":" + std::string(client) + " 461 " + std::string(nickname) + RED + " " + std::string(cmd) + " :No prefix before last param" RESET "\r\n")
 #define ERR_ALREADYREGISTERED(client, nickname, cmd) ":" + std::string(client) + " 462 " + std::string(nickname) + RED " USER: You may not reregister" RESET "\r\n"
-#define ERR_PASSWDMISMATCH(client, nickname) ":" + std::string(client) + " 464 " + std::string(nickname) + RED " Connection refused: Password incorrect" RESET "\r\n"
+#define ERR_PASSWDMISMATCH(client, nickname) ":" + std::string(client) + " 464 " + std::string(nickname) + " " + RED " Connection refused: Password incorrect" RESET "\r\n"
 #define ERR_KEYSET(client, nickname, channel) ":" + std::string(client) + " 467 " + std::string(nickname) + " " + std::string(channel) + RED " :Channel key already set" RESET "\r\n"
 #define ERR_CHANNELISFULL(client, nickname, chan_name) (":" + std::string(client) + " 471 " + std::string(nickname) + " " + std::string(chan_name) + " :Cannot join channel (+l)" RESET "\r\n")
 #define ERR_UNKNOWNMODE(client, nickname, mode, channel) ":" + std::string(client) + " 472 " + std::string(nickname) + " " + std::string(mode) + RED " :is unknown mode char to me for " + std::string(channel) + RESET "\r\n"
@@ -148,6 +149,7 @@ class Server {
 		size_t	_recvAll(pollfd pfd);
 		std::pair<std::string, std::string>	_strToPair(std::string buff);
 		std::pair<std::string, std::string>	_splitPrivMsg(std::string buff);
+		std::string _getReason(std::string &buff);
 		int		_sendError(User *user, std::string msg);
 		int		_sendExecuted(User *user, std::string ret);
 		int		_disconnectUser(User *user, int ret);
@@ -175,6 +177,7 @@ class Server {
 		int		_notice(User *user, std::string buff);
 		int		_whois(User *user, std::string buff);
 		int		_who(User *user, std::string buff);
+		int		_kick(User *user, std::string buff);
 		int		_topic(User *user, std::string buff);
 		int		_oper(User *user, std::string buff);
 		int		_die(User *user, std::string buff);

@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 15:35:57 by arudy             #+#    #+#             */
-/*   Updated: 2022/12/06 14:12:30 by arudy            ###   ########.fr       */
+/*   Updated: 2022/12/07 11:15:54 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,16 +59,15 @@ int Server::_checkModes(User *user, Channel *new_chan, std::string key) {
 
 int Server::_join(User *user, std::string buff) {
 	Channel *new_chan;
-	std::cout << "BUFF :" << buff << "\n";
 	std::vector<std::pair<std::string, std::string> > args = strtovec(buff);
 
 	for (std::vector<std::pair<std::string, std::string> >::iterator it = args.begin(); it != args.end(); it++) {
-		std::cout << "IT FIRST :" << it->first << "\n";
-		std::cout << "IT SECOND :" << it->second << "\n";
-		if (it->first == "0") {
-			user->removeFromAll();
-			continue;
-		} // REfaire ca en envoyant des part msg pour chaque chans du user
+		if (it->first == "#0") {
+			std::map<std::string, Channel *> channels = user->getJoined();
+			for (std::map<std::string, Channel *>::iterator it = channels.begin(); it != channels.end(); it++)
+				_part(user, it->first + " :Left all channels");
+			return 0;
+		}
 		else if (!_channels.count(it->first)) {
 			new_chan = new Channel(it->first);
 			_channels.insert(std::pair<std::string, Channel *>(it->first, new_chan));

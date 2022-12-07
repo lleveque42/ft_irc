@@ -6,7 +6,7 @@
 #    By: arudy <arudy@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/16 08:42:57 by arudy             #+#    #+#              #
-#    Updated: 2022/11/30 17:33:49 by arudy            ###   ########.fr        #
+#    Updated: 2022/12/07 12:21:16 by arudy            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,8 @@ DIR_OBJS = objects
 SRCS	= main.cpp Server/Server.cpp User/User.cpp Utils/helper.cpp Channel/Channel.cpp\
 		  $(addprefix Commands/, nick.cpp pass.cpp pong.cpp user.cpp \
 		  quit.cpp command.cpp mode.cpp join.cpp privmsg.cpp whois.cpp \
-		  part.cpp topic.cpp oper.cpp who.cpp notice.cpp die.cpp kill.cpp)
+		  part.cpp topic.cpp oper.cpp who.cpp notice.cpp die.cpp kill.cpp \
+		  kick.cpp)
 
 OBJS	= $(SRCS:%.cpp=$(DIR_OBJS)/%.o)
 
