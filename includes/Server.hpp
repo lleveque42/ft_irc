@@ -6,7 +6,7 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/12/07 15:22:52 by arudy            ###   ########.fr       */
+/*   Updated: 2022/12/07 16:22:52 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,6 +178,7 @@ class Server {
 		int		_whois(User *user, std::string buff);
 		int		_who(User *user, std::string buff);
 		int		_kick(User *user, std::string buff);
+		int		_invite(User *user, std::string buff);
 		int		_topic(User *user, std::string buff);
 		int		_oper(User *user, std::string buff);
 		int		_die(User *user, std::string buff);
