@@ -192,9 +192,9 @@ int Server::_fillRecvs(std::string buff) {
 		backr_pos = buff.find('\r');
 		space = begin + space_pos;
 		backr = begin + backr_pos;
-		if (space_pos == buff.npos && backr_pos == buff.npos)
+		if (backr_pos == buff.npos && space_pos == buff.npos)
 			_recvs.push_back(std::make_pair(std::string(begin, buff.end() - 1), std::string()));
-		else if (space_pos == buff.npos && backr_pos != buff.npos)
+		else if (space_pos == buff.npos)
 			_recvs.push_back(std::make_pair(std::string(begin, buff.end() - 2), std::string()));
 		else {
 			if (backr_pos == buff.npos)
