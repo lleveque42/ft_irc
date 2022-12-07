@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   user.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
+/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 11:41:37 by lleveque          #+#    #+#             */
-/*   Updated: 2022/12/02 11:04:24 by arudy            ###   ########.fr       */
+/*   Updated: 2022/12/07 17:19:55 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int	Server::_user(User *user, std::string args) {
 		}
 	}
 	user->setUserName(argsVec[0]);
-	user->setHostName(argsVec[2]);
+	user->setHostName(_new_connection);
 	user->setRealName(argsVec[3]);
 	user->setFirstTry(false);
 	return _registrationCompleted(user);

@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/12/07 15:50:14 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/12/07 17:23:04 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 #include <sstream>
 #include <netdb.h>
 #include <csignal>
@@ -128,6 +129,7 @@ class Server {
 		std::string				_op_name;
 		std::string				_op_password;
 		std::string				_buff;
+		std::string				_new_connection;
 		std::vector<std::pair<std::string, std::string> >	_recvs;
 		std::map<std::string, Channel *>					_channels;
 		std::map<const std::string, cmds>					_cmds;

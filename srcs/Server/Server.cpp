@@ -102,13 +102,14 @@ void Server::launch() {
 
 void Server::_acceptUser() {
 	int new_sd;
-	sockaddr_storage new_addr; // all infos from new co
+	sockaddr_in new_addr; // all infos from new co
 	socklen_t new_addr_size; // sizeof sockaddr_storage
 
 	std::cout << DIS_CONNECTED << std::endl;
 	new_addr_size = sizeof new_addr;
 	new_sd = accept(_sd, (sockaddr *)&new_addr, &new_addr_size); // accept incoming co
 	_users.insert(std::pair<int, User*>(new_sd, new User(new_sd)));
+	_new_connection = inet_ntoa(new_addr.sin_addr);
 	_pfds.push_back(pollfd());
 	_pfds.back().fd = new_sd;
 	_pfds.back().events = POLLIN;
