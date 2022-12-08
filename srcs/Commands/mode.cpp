@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 13:15:43 by arudy             #+#    #+#             */
-/*   Updated: 2022/12/02 14:22:49 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/12/08 12:05:15 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ int Server::_applyMode(User *user, Channel *channel, std::string buff, bool valu
 				_sendError(user, ERR_NEEDMOREPARAMS(user->getClient(), user->getNick(), "MODE"));
 				continue;
 			}
-			if (channel->getKey().first) {
+			if (value && channel->getKey().first) {
 				_sendError(user, ERR_KEYSET(user->getClient(), user->getNick(), channel->getName()));
 				continue;
 			}
@@ -95,8 +95,14 @@ int Server::_applyMode(User *user, Channel *channel, std::string buff, bool valu
 				_sendError(user, ERR_USERNOTINCHANNEL(user->getClient(), user->getNick(), it->second, channel->getName()));
 				continue;
 			}
-			if (!value) {
+			if (!value && it->second != user->getNick()) {
 				_sendError(user, ERR_USERSDONTMATCH(user->getClient(), user->getNick()));
+				continue;
+			}
+			if (!value) {
+				if (channel->isOp(user))
+					channel->removeFromOp(user);
+				_sendExecuted(user, RPL_CHANNELMODEIS2(user->getClient(), user->getNick(), channel->getName(), "", it->second));
 				continue;
 			}
 			channel->addToOp(channel->getUsers().find(it->second)->second);
