@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: arudy <arudy@student.42.fr>                +#+  +:+       +#+         #
+#    By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/16 08:42:57 by arudy             #+#    #+#              #
-#    Updated: 2022/12/07 16:22:30 by arudy            ###   ########.fr        #
+#    Updated: 2022/12/08 12:52:30 by lleveque         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -45,7 +45,7 @@ clean:
 	${RM} ${OBJS}
 
 fclean: clean
-	${RM} ${NAME}
+	${RM} ${NAME} ${DIR_OBJS}
 
 re: fclean all
 
@@ -55,4 +55,7 @@ rc: re
 rv: re
 	${RM} ${OBJS} && clear && valgrind --leak-check=full ./ircserv 6667 lol
 
-.PHONY: all clean fclean re rc
+v: all
+	valgrind --leak-check=full ./ircserv 6667 lol
+
+.PHONY: all clean fclean re rc rv v
