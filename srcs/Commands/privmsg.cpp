@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   privmsg.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
+/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 16:17:10 by arudy             #+#    #+#             */
-/*   Updated: 2022/11/28 11:22:42 by arudy            ###   ########.fr       */
+/*   Updated: 2022/12/08 13:42:13 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 std::pair<std::string, std::string>	Server::_splitPrivMsg(std::string buff) {
 	size_t i = buff.find(':');
 	if (i == buff.npos)
-		return std::make_pair(std::string(""), std::string(""));
+		return std::make_pair(std::string(buff.begin(), buff.end()), std::string(""));
 	std::string first(buff.begin(), buff.begin() + i);
 	std::string second(buff.begin() + i + 1, buff.end());
 
