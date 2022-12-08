@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
+/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 15:35:57 by arudy             #+#    #+#             */
-/*   Updated: 2022/12/07 11:15:54 by arudy            ###   ########.fr       */
+/*   Updated: 2022/12/08 12:34:45 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,8 @@ int Server::_join(User *user, std::string buff) {
 	Channel *new_chan;
 	std::vector<std::pair<std::string, std::string> > args = strtovec(buff);
 
+	if (buff.empty())
+		return _sendError(user, ERR_NEEDMOREPARAMS(user->getClient(), user->getNick(), "JOIN"));
 	for (std::vector<std::pair<std::string, std::string> >::iterator it = args.begin(); it != args.end(); it++) {
 		if (it->first == "#0") {
 			std::map<std::string, Channel *> channels = user->getJoined();

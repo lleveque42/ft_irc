@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   part.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
+/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/24 15:19:38 by arudy             #+#    #+#             */
-/*   Updated: 2022/12/07 12:26:00 by arudy            ###   ########.fr       */
+/*   Updated: 2022/12/08 12:33:20 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,8 @@ void	Server::_sendPartMsg(User *sender, std::map<std::string, User *> targets, s
 }
 
 int Server::_part(User *user, std::string buff) {
+	if (buff.empty())
+		return _sendError(user, ERR_NEEDMOREPARAMS(user->getClient(), user->getNick(), "PART"));
 	std::string reason = _getReason(buff);
 	std::vector<std::string> chans = _strToVec(buff);
 

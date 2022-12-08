@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   oper.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
+/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 14:14:03 by lleveque          #+#    #+#             */
-/*   Updated: 2022/12/02 16:48:26 by arudy            ###   ########.fr       */
+/*   Updated: 2022/12/08 12:33:50 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,9 @@ int Server::_oper(User *user, std::string buff) {
 	size_t delimiter;
 	std::string key;
 	std::string name;
-
+	
+	if (buff.empty())
+		return _sendError(user, ERR_NEEDMOREPARAMS(user->getClient(), user->getNick(), "OPER"));
 	if ((delimiter = buff.find(' ')) == buff.npos)
 		return _sendError(user, ERR_NEEDMOREPARAMS(user->getClient(), user->getNick(), "OPER"));
 	name = std::string(buff.begin(), buff.begin() + delimiter);
