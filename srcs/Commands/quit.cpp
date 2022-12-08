@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/21 12:38:06 by lleveque          #+#    #+#             */
-/*   Updated: 2022/12/07 15:53:32 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/12/08 12:49:03 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,7 @@ int Server::_quit(User *user, std::string args) {
 	for (std::map<std::string, Channel *>::iterator it = chans.begin(); it != ite; it++) {
 		std::map<std::string, User *> users(it->second->getUsers());
 		for (std::map<std::string, User *>::iterator it2 = users.begin(); it2 != users.end(); it2++) {
-			if (it2->first != user->getNick())
-				_sendExecuted(it2->second, RPL_PARTMSG(user->getClient(), user->getNick(), it->first, "has left server"));
+			_sendExecuted(it2->second, RPL_PARTMSG(user->getClient(), user->getNick(), it->first, args));
 		}
 	}
 	return _disconnectUser(user, 0);
