@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
+/*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 10:07:23 by arudy             #+#    #+#             */
-/*   Updated: 2022/12/07 17:25:22 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/12/08 09:35:43 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,9 +60,10 @@
 #define RPL_WHOISUSER(client, nickuser, nickname, username, hostname, realname) (":" + std::string(client) + " 311 " + std::string(nickuser) + " " + std::string(nickname) + " " + std::string(username) + " " + std::string(hostname) + " * :" +std::string(realname) + "\r\n")
 #define RPL_CHANNELMODEIS(client, nickname, chan_name, modes) (":" + std::string(client) + " 324 " + std::string(nickname) + " " + std::string(chan_name) + " +" + std::string(modes) + "\r\n")
 #define RPL_CHANNELMODEIS2(client, nickname, chan_name, modes, target) (":" + std::string(client) + " 324 " + std::string(nickname) + " " + std::string(chan_name) + " +" + std::string(modes) + " " + std::string(target) + "\r\n")
-#define RPL_NOTOPIC(client, nickname, chan_name) (":" + std::string(client) +" 331 " + std::string(nickname) + " " + std::string(chan_name) + " :No topic is set\r\n")
+#define RPL_NOTOPIC(client, nickname, chan_name) (":" + std::string(client) + " 331 " + std::string(nickname) + " " + std::string(chan_name) + " :No topic is set\r\n")
 #define RPL_KICK(client, nickname, chan_name, to_kick, reason)(":" + std::string(client) + " KICK " + std::string(chan_name) + " " + std::string(to_kick) + " :" + std::string(reason) + "\r\n")
-#define RPL_TOPIC(client, nickname, chan_name, topic) (":" + std::string(client) +" 332 " + std::string(nickname) + " " + std::string(chan_name) + " :" + std::string(topic) + "\r\n")
+#define RPL_TOPIC(client, nickname, chan_name, topic) (":" + std::string(client) + " 332 " + std::string(nickname) + " " + std::string(chan_name) + " :" + std::string(topic) + "\r\n")
+#define RPL_INVITE(client, invite_nick, chan_name) (":" + std::string(client) + " 341 " + "INVITE " + std::string(invite_nick) + " " + std::string(chan_name) + "\r\n")
 #define RPL_WHOREPLY(client, nickname, msg) (":" + std::string(client) + " 352 " + std::string(nickname) + " " + std::string(msg) + "\r\n")
 #define RPL_ENDOFWHO(client, nickname, mask) (":" + std::string(client) + " 315 " + std::string(nickname) + " " + std::string(mask) + " :End of WHO list\r\n")
 #define RPL_NAMEREPLY(client, nickname, chan_name, usernames) (":" + std::string(client) +" 353 " + std::string(nickname) + " = " + std::string(chan_name) + " :" + std::string(usernames) + "\r\n")
@@ -86,7 +87,7 @@
 #define ERR_NICKNAMEINUSE(client, nickname) ":" + std::string(client) + " 433 " + std::string(nickname) + RED " NICK :Nickname is already in use" RESET "\r\n"
 #define ERR_USERNOTINCHANNEL(client, nickname, target, channel) ":" + std::string(client) + " 441 " + std::string(nickname) + " " + std::string(target) + " " + std::string(channel) + RED " :They aren't on that channel" RESET "\r\n"
 #define ERR_NOTONCHANNEL(client, nickname, chan_name) (":" + std::string(client) + " 442 " + std::string(nickname) + RED + " " + std::string(chan_name) + " :You're not on channel" RESET "\r\n"
-#define ERR_USERONCHANNEL(client, nickname, chan_name) (":" + std::string(client) + " 443 " + std::string(nickname) + RED + " " + std::string(chan_name) + " :is already on channel" RESET "\r\n"
+#define ERR_USERONCHANNEL(client, nickname, invite_nick, chan_name) (":" + std::string(client) + " 443 " + std::string(nickname) + RED + " " + std::string(invite_nick) + " " + std::string(chan_name) + " :is already on channel" RESET "\r\n"
 #define ERR_NEEDMOREPARAMS(client, nickname, cmd) (":" + std::string(client) + " 461 " + std::string(nickname) + RED + " " + std::string(cmd) + " :Not enough parameters" RESET "\r\n")
 #define ERR_NOPREFIX(client, nickname, cmd) (":" + std::string(client) + " 461 " + std::string(nickname) + RED + " " + std::string(cmd) + " :No prefix before last param" RESET "\r\n")
 #define ERR_ALREADYREGISTERED(client, nickname, cmd) ":" + std::string(client) + " 462 " + std::string(nickname) + RED " USER: You may not reregister" RESET "\r\n"

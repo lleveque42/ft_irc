@@ -6,10 +6,9 @@
 /*   By: arudy <arudy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/07 16:21:38 by arudy             #+#    #+#             */
-/*   Updated: 2022/12/07 17:19:13 by arudy            ###   ########.fr       */
+/*   Updated: 2022/12/08 09:37:53 by arudy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "../../includes/Server.hpp"
 #include "../../includes/User.hpp"
@@ -41,9 +40,9 @@ int	Server::_invite(User *user, std::string buff) {
 		return _sendError(user, ERR_NOTONCHANNEL(user->getClient(), user->getNick(), chan)));
 	Channel *channel = _channels[chan];
 	if (channel->getUsers().count(nick))
-		return _sendError(user, ERR_USERONCHANNEL(user->getClient(), user->getNick(), chan))); // Recheck l'error
-
-	// RPL invite
-
+		return _sendError(user, ERR_USERONCHANNEL(user->getClient(), user->getNick(), new_user->getNick(), chan))); // Recheck l'error
+	std::string rpl = ":" + user->getNick() + " INVITE " + new_user->getNick() + " " + chan + "\r\n";
+	_sendExecuted(new_user, rpl);
+	_sendExecuted(user, RPL_INVITE(user->getClient(), new_user->getNick(), chan));
 	return 0;
 }
